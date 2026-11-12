@@ -38,8 +38,13 @@
   .tabs button{flex:1;border:0;background:transparent;border-radius:999px;padding:12px 8px;font-weight:700;font-size:15px;color:var(--ink2);cursor:pointer;min-height:48px;font-family:inherit}
   .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14)}
 
-  /* Job picker — simple */
+  /* Category + Job picker — two simple steps */
   .label{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
+  .cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .cat{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:15px 16px;cursor:pointer;color:var(--ink);font-family:inherit;min-height:56px}
+  .cat b{display:block;font-size:17px}
+  .cat span{font-size:12.5px;color:var(--ink2)}
+  .cat[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
   .jobs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
   .job{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;color:var(--ink);font-family:inherit}
   .job b{display:block;font-size:15px}
@@ -82,7 +87,7 @@
 <body>
 <main class="wrap">
   <h1>Salary, <em>simply.</em></h1>
-  <p class="sub">Pick a job. See what you get. That's it.</p>
+  <p class="sub">First pick a group. Then pick the job. See what you get.</p>
 
   <div class="tabs" role="tablist" aria-label="Sections">
     <button type="button" role="tab" id="tabCalc" aria-selected="true">🧮 &nbsp;Calculator</button>
@@ -91,10 +96,13 @@
 
   <!-- ============ CALCULATOR (only numbers) ============ -->
   <section id="panelCalc" role="tabpanel" aria-label="Calculator">
-    <p class="label">1 — Tap a job</p>
+    <p class="label">1 — Which group?</p>
+    <div class="cats" id="cats" role="group" aria-label="Choose a group"></div>
+
+    <p class="label" id="jobsLabel">2 — Tap a bank job</p>
     <div class="jobs" id="jobs"></div>
 
-    <p class="label">2 — Your salary</p>
+    <p class="label">3 — Your salary</p>
     <div class="slip">
       <div class="slip-head"><b id="slipTitle">—</b><span id="slipSub">Per month</span></div>
       <div class="rows" id="rows"></div>
@@ -103,7 +111,7 @@
         <div class="big" id="inhandAmt">₹0</div>
       </div>
     </div>
-    <p class="note">Starting pay for a new joiner. Bank: 12th Bipartite Settlement, DA 31.33%. Railway: 60% DA, 3,500 km run in the month. Tax is approximate.</p>
+    <p class="note">Starting pay for a new joiner, per month. Bank: 12th Bipartite Settlement, DA 31.33%. Railway, SSC, Defence and UPSC: 7th Pay Commission, DA 60%, HRA at Guwahati rate (20%) where shown. Railway running staff: 3,500 km run in the month. Tax is approximate.</p>
   </section>
 
   <!-- ============ EXPLAIN (only meanings, no calculator) ============ -->
@@ -119,6 +127,7 @@
       <div class="term"><b>Special Pay <span>— bank clerk only</span></b><p>Extra money for working at the customer desk.</p></div>
       <div class="term"><b>Grade Allowance + LCA <span>— RBI only</span></b><p>RBI's own extra allowances. Other banks do not give these — one reason RBI pays more.</p></div>
       <div class="term"><b>Running Allowance <span>— railway only</span></b><p>Money for every kilometre the train runs. Only drivers and guards get it. Run more km, get more money.</p></div>
+      <div class="term"><b>MSP <span>— defence only</span></b><p>Military Service Pay. Extra money only for Army, Navy and Air Force posts, for the hardship of service life. DA is paid on Basic + MSP.</p></div>
       <div class="term"><b><span>Gross</span></b><p>Basic Pay + DA + HRA + all allowances added together. This is <b>before</b> any cut.</p></div>
       <div class="term"><b><span>NPS</span> — Pension cut</b><p>10% is cut from your salary and saved for your pension. Your office adds 14% more from its side.</p></div>
       <div class="term"><b><span>Tax</span></b><p>Money paid to the government from your salary, plus a small professional tax.</p></div>
@@ -132,15 +141,41 @@
 </main>
 
 <script>
+  var CATS = [
+    { id:"bank", name:"Bank", sub:"SBI, IBPS, RBI, RRB" },
+    { id:"railway", name:"Railway", sub:"Loco Pilot, TTE, Guard…" },
+    { id:"ssc", name:"SSC", sub:"CGL, CHSL, GD, MTS" },
+    { id:"defence", name:"Defence", sub:"Army — Sepoy to Officer" },
+    { id:"upsc", name:"UPSC", sub:"IAS, IPS, IRS" }
+  ];
+  var CAT_LABEL = { bank:"2 — Tap a bank job", railway:"2 — Tap a railway job", ssc:"2 — Tap an SSC job", defence:"2 — Tap a defence job", upsc:"2 — Tap a UPSC service" };
   var JOBS = [
-    { id:"clerk", name:"IBPS Clerk", sub:"Bank clerk", basic:26730, da:11477, tax:760,
+    { id:"sbipo", cat:"bank", name:"SBI PO", sub:"State Bank officer", basic:55220, da:21884, tax:11500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:5659},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:14633},
+        {n:"Other Allowances", d:"Petrol, leased house and other SBI perks — approx", a:6500}
+      ]},
+    { id:"sbiclerk", cat:"bank", name:"SBI Clerk", sub:"Junior Associate", basic:26730, da:11477, tax:760,
       lines:[
         {n:"HRA", d:"House Rent Allowance — money for house rent", a:2740},
         {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:7083},
         {n:"Special Pay", d:"Extra for customer desk work", a:1970},
         {n:"Transport Allowance", d:"Money for coming to office daily", a:850}
       ]},
-    { id:"rbi", name:"RBI Assistant", sub:"Reserve Bank of India", basic:29000, da:14311, tax:2245,
+    { id:"po", cat:"bank", name:"IBPS PO", sub:"Bank officer", basic:48480, da:19214, tax:6000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:4969},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:12847}
+      ]},
+    { id:"clerk", cat:"bank", name:"IBPS Clerk", sub:"Bank clerk", basic:26730, da:11477, tax:760,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:2740},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:7083},
+        {n:"Special Pay", d:"Extra for customer desk work", a:1970},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:850}
+      ]},
+    { id:"rbi", cat:"bank", name:"RBI Assistant", sub:"Reserve Bank of India", basic:29000, da:14311, tax:2245,
       lines:[
         {n:"Grade Allowance", d:"RBI's own extra allowance", a:3500},
         {n:"HRA", d:"House Rent Allowance — money for house rent", a:4142},
@@ -148,40 +183,142 @@
         {n:"Transport Allowance", d:"Money for coming to office daily", a:1200},
         {n:"Other Allowances", d:"Small miscellaneous allowances", a:3475}
       ]},
-    { id:"po", name:"IBPS PO", sub:"Bank officer", basic:48480, da:19214, tax:6000,
-      lines:[
-        {n:"HRA", d:"House Rent Allowance — money for house rent", a:4969},
-        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:12847}
-      ]},
-    { id:"alp", name:"Railway ALP", sub:"Assistant Loco Pilot", basic:19900, da:11940, tax:900,
-      lines:[
-        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3980},
-        {n:"Transport Allowance", d:"Money for coming to duty", a:1440},
-        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:15050}
-      ]},
-    { id:"guard", name:"Railway Guard", sub:"Goods Guard / Train Manager", basic:29200, da:17520, tax:2500,
-      lines:[
-        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:5840},
-        {n:"Transport Allowance", d:"Money for coming to duty", a:2880},
-        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:18795}
-      ]},
-    { id:"rrb", name:"RRB Assistant", sub:"Same pay as IBPS Clerk", basic:26730, da:11477, tax:760,
+    { id:"rrb", cat:"bank", name:"RRB Assistant", sub:"Same pay as IBPS Clerk", basic:26730, da:11477, tax:760,
       lines:[
         {n:"HRA", d:"House Rent Allowance — money for house rent", a:2740},
         {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:7083},
         {n:"Special Pay", d:"Extra for customer desk work", a:1970},
         {n:"Transport Allowance", d:"Money for coming to office daily", a:850}
+      ]},
+    { id:"rrbpo", cat:"bank", name:"RRB Officer", sub:"Scale-I — same pay as IBPS PO", basic:48480, da:19214, tax:6000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:4969},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:12847}
+      ]},
+    { id:"alp", cat:"railway", name:"Railway ALP", sub:"Assistant Loco Pilot", basic:19900, da:11940, tax:900,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3980},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:1440},
+        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:15050}
+      ]},
+    { id:"guard", cat:"railway", name:"Railway Guard", sub:"Goods Guard / Train Manager", basic:29200, da:17520, tax:2500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:5840},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880},
+        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:18795}
+      ]},
+    { id:"locopilot", cat:"railway", name:"Loco Pilot", sub:"Goods — after ALP promotion, Level 6", basic:35400, da:21240, tax:6500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:7080},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880},
+        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:20790}
+      ]},
+    { id:"tte", cat:"railway", name:"TTE", sub:"Travelling Ticket Examiner, Level 6", basic:35400, da:21240, tax:3000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:7080},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"stationmaster", cat:"railway", name:"Station Master", sub:"Level 6", basic:35400, da:21240, tax:3000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:7080},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"ticketclerk", cat:"railway", name:"Ticket Clerk", sub:"Commercial Clerk, Level 3", basic:21700, da:13020, tax:400,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4340},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"cgl7", cat:"ssc", name:"SSC CGL — Inspector / ASO", sub:"Level 7 post, CGL", basic:44900, da:26940, tax:5500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:8980},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:2880}
+      ]},
+    { id:"cgl5", cat:"ssc", name:"SSC CGL — Auditor", sub:"Level 5 post, CGL", basic:29200, da:17520, tax:1800,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:5840},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:2880}
+      ]},
+    { id:"chsl", cat:"ssc", name:"SSC CHSL — LDC", sub:"Lower Division Clerk, Level 2", basic:19900, da:11940, tax:300,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3980},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1440}
+      ]},
+    { id:"gd", cat:"ssc", name:"SSC GD Constable", sub:"Level 3", basic:21700, da:13020, tax:400,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4340},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"mts", cat:"ssc", name:"SSC MTS", sub:"Level 1", basic:18000, da:10800, tax:200,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3600},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1440}
+      ]},
+    { id:"sepoy", cat:"defence", name:"Army Sepoy", sub:"Soldier, Level 3 + MSP", basic:21700, da:16140, tax:600,
+      lines:[
+        {n:"MSP", d:"Military Service Pay — defence only", a:5200},
+        {n:"HRA", d:"House Rent Allowance — if no quarters", a:4340},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:1440}
+      ]},
+    { id:"havildar", cat:"defence", name:"Army Havildar", sub:"Level 5 + MSP", basic:29200, da:20640, tax:2200,
+      lines:[
+        {n:"MSP", d:"Military Service Pay — defence only", a:5200},
+        {n:"HRA", d:"House Rent Allowance — if no quarters", a:5840},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"armyofficer", cat:"defence", name:"Army Officer", sub:"Lieutenant, Level 10 + MSP", basic:56100, da:42960, tax:18000,
+      lines:[
+        {n:"MSP", d:"Military Service Pay — defence only", a:15500},
+        {n:"HRA", d:"House Rent Allowance — if no quarters", a:11220},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:5760}
+      ]},
+    { id:"ias", cat:"upsc", name:"IAS", sub:"Entry post, Level 10", basic:56100, da:33660, tax:14500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%), if no house", a:11220},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:5760}
+      ]},
+    { id:"ips", cat:"upsc", name:"IPS", sub:"Entry post, Level 10 — same pay as IAS", basic:56100, da:33660, tax:14500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%), if no house", a:11220},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:5760}
+      ]},
+    { id:"irs", cat:"upsc", name:"IRS", sub:"Entry post, Level 10 — same pay as IAS", basic:56100, da:33660, tax:14500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%), if no house", a:11220},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:5760}
       ]}
   ];
 
   function inr(n){ return "₹" + Math.round(n).toLocaleString("en-IN"); }
+  var currentCat = "bank";
   var current = JOBS[0];
+  var catsEl = document.getElementById("cats");
   var jobsEl = document.getElementById("jobs");
+  var jobsLabel = document.getElementById("jobsLabel");
   var rowsEl = document.getElementById("rows");
 
+  function renderCats(){
+    catsEl.innerHTML = "";
+    CATS.forEach(function(c){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "cat";
+      b.setAttribute("aria-pressed", c.id === currentCat ? "true" : "false");
+      b.innerHTML = "<b>" + c.name + "</b><span>" + c.sub + "</span>";
+      b.addEventListener("click", function(){
+        if (currentCat === c.id) return;
+        currentCat = c.id;
+        // Show the first job of the new group
+        for (var i = 0; i < JOBS.length; i++){ if (JOBS[i].cat === currentCat){ current = JOBS[i]; break; } }
+        renderCats(); renderJobs(); renderSlip();
+      });
+      catsEl.appendChild(b);
+    });
+  }
+
   function renderJobs(){
+    jobsLabel.textContent = CAT_LABEL[currentCat] || "2 — Tap a job";
     jobsEl.innerHTML = "";
     JOBS.forEach(function(j){
+      if (j.cat !== currentCat) return;
       var b = document.createElement("button");
       b.type = "button"; b.className = "job";
       b.setAttribute("aria-pressed", j.id === current.id ? "true" : "false");
@@ -203,7 +340,7 @@
     j.lines.forEach(function(l){ gross += l.a; });
     var nps = Math.round((j.basic + (j.id==="rbi" ? j.da : Math.round(j.basic * (j.id==="alp"||j.id==="guard" ? 0.60 : 0.3133)))) * 0.10);
     // Use the known NPS figures so totals match the standard breakups
-    var NPS = { clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510 };
+    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976 };
     nps = NPS[j.id];
     var inhand = gross - nps - j.tax;
     var h = "";
@@ -233,6 +370,7 @@
   tabCalc.addEventListener("click", function(){ show("calc"); });
   tabExplain.addEventListener("click", function(){ show("explain"); });
 
+  renderCats();
   renderJobs();
   renderSlip();
 </script>

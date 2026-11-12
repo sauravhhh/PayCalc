@@ -497,7 +497,8 @@
       text(56, boxY + 15, "In-hand - money in your bank account", 13, true, C_WHITE);
       amt(539, boxY + 13, d.inhand, 15, true, C_WHITE);
       y = boxY - 24;
-      text(40, y, "Starting pay for a new joiner, per month. Tax is approximate.", 9.5, false, C_INK2);
+      text(40, y, "Starting pay for a new joiner, per month. Tax is approximate.", 9.5, false, C_INK2); y -= 15;
+      text(40, y, "https://sauravhhh.github.io/PayCalc/", 9.5, true, C_GREEN);
 
       var content = ops.join("\n");
       var hasImg = !!logo;

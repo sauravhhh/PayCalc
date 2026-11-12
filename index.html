@@ -69,6 +69,8 @@
   .inhand b{font-size:16px}
   .inhand small{display:block;font-weight:400;opacity:.85;font-size:12.5px}
   .inhand .big{font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:700;white-space:nowrap}
+  .pdfbtn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:12px;padding:14px 16px;min-height:52px;border-radius:14px;border:2px solid var(--green);background:var(--surface);color:var(--green);font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer}
+  .pdfbtn:active{background:var(--green-soft)}
 
   /* Explain — visually DIFFERENT: warm list, not a payslip */
   .explain-intro{background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:14px;padding:14px 16px;font-size:14.5px;margin-bottom:14px}
@@ -111,7 +113,8 @@
         <div class="big" id="inhandAmt">₹0</div>
       </div>
     </div>
-    <p class="note">Starting pay for a new joiner, per month. Bank: 12th Bipartite Settlement, DA 31.33%. Railway, SSC, Defence and UPSC: 7th Pay Commission, DA 60%, HRA at Guwahati rate (20%) where shown. Railway running staff: 3,500 km run in the month. Tax is approximate.</p>
+    <button type="button" class="pdfbtn" id="pdfBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v10"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>Download PDF</button>
+    <p class="note">Starting pay for a new joiner, per month. Bank: 12th Bipartite Settlement, DA 31.33%. Railway, SSC, Defence and UPSC: 7th Pay Commission, DA 60%, HRA at Guwahati rate (20%) where shown. Assam: Assam ROP 2017 (state pay rules), DA 55%, HRA at Guwahati rate (20%) — starting-pay approximations. Railway running staff: 3,500 km run in the month. Tax is approximate.</p>
   </section>
 
   <!-- ============ EXPLAIN (only meanings, no calculator) ============ -->
@@ -128,6 +131,8 @@
       <div class="term"><b>Grade Allowance + LCA <span>— RBI only</span></b><p>RBI's own extra allowances. Other banks do not give these — one reason RBI pays more.</p></div>
       <div class="term"><b>Running Allowance <span>— railway only</span></b><p>Money for every kilometre the train runs. Only drivers and guards get it. Run more km, get more money.</p></div>
       <div class="term"><b>MSP <span>— defence only</span></b><p>Military Service Pay. Extra money only for Army, Navy and Air Force posts, for the hardship of service life. DA is paid on Basic + MSP.</p></div>
+      <div class="term"><b>Grade Pay <span>— Assam only</span></b><p>Assam state jobs are shown as a pay band plus Grade Pay. Your Basic Pay is the two added together — Grade III: ₹14,000 + ₹6,200 = ₹20,200. Grade IV: ₹12,000 + ₹3,900 = ₹15,900. APSC (ACS): ₹30,000 + ₹13,300 = ₹43,300.</p></div>
+      <div class="term"><b>Medical Allowance <span>— Assam only</span></b><p>A small fixed amount every month for medical expenses, paid to Assam state government staff.</p></div>
       <div class="term"><b><span>Gross</span></b><p>Basic Pay + DA + HRA + all allowances added together. This is <b>before</b> any cut.</p></div>
       <div class="term"><b><span>NPS</span> — Pension cut</b><p>10% is cut from your salary and saved for your pension. Your office adds 14% more from its side.</p></div>
       <div class="term"><b><span>Tax</span></b><p>Money paid to the government from your salary, plus a small professional tax.</p></div>
@@ -136,7 +141,7 @@
 
     <div class="formula-box">Basic Pay + DA + HRA + Allowances<br>= Gross<br>Gross − NPS − Tax = In-hand</div>
 
-    <p class="note">Are the heads the same for every job? No. Basic Pay + DA + HRA + TA are common everywhere. The extra heads are different — bank has Special Allowance, RBI has Grade Allowance + LCA, railway has Running Allowance.</p>
+    <p class="note">Are the heads the same for every job? No. Basic Pay + DA + HRA + TA are common everywhere. The extra heads are different — bank has Special Allowance, RBI has Grade Allowance + LCA, railway has Running Allowance, Assam state jobs have Grade Pay and Medical Allowance.</p>
   </section>
 </main>
 
@@ -146,9 +151,10 @@
     { id:"railway", name:"Railway", sub:"Loco Pilot, TTE, Guard…" },
     { id:"ssc", name:"SSC", sub:"CGL, CHSL, GD, MTS" },
     { id:"defence", name:"Defence", sub:"Army — Sepoy to Officer" },
-    { id:"upsc", name:"UPSC", sub:"IAS, IPS, IRS" }
+    { id:"upsc", name:"UPSC", sub:"IAS, IPS, IRS" },
+    { id:"assam", name:"Assam", sub:"3rd Grade, 4th Grade, APSC" }
   ];
-  var CAT_LABEL = { bank:"2 — Tap a bank job", railway:"2 — Tap a railway job", ssc:"2 — Tap an SSC job", defence:"2 — Tap a defence job", upsc:"2 — Tap a UPSC service" };
+  var CAT_LABEL = { bank:"2 — Tap a bank job", railway:"2 — Tap a railway job", ssc:"2 — Tap an SSC job", defence:"2 — Tap a defence job", upsc:"2 — Tap a UPSC service", assam:"2 — Tap an Assam job" };
   var JOBS = [
     { id:"sbipo", cat:"bank", name:"SBI PO", sub:"State Bank officer", basic:55220, da:21884, tax:11500,
       lines:[
@@ -285,6 +291,24 @@
       lines:[
         {n:"HRA", d:"House Rent Allowance — Guwahati (20%), if no house", a:11220},
         {n:"Transport Allowance", d:"Money for coming to office daily", a:5760}
+      ]},
+    { id:"assam3", cat:"assam", name:"Assam 3rd Grade", sub:"ADRE Grade III — LDA / Junior Assistant", basic:20200, da:11110, tax:300,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4040},
+        {n:"Medical Allowance", d:"Fixed monthly medical allowance — Assam state", a:600},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1440}
+      ]},
+    { id:"assam4", cat:"assam", name:"Assam 4th Grade", sub:"ADRE Grade IV — Peon / Chowkidar", basic:15900, da:8745, tax:200,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3180},
+        {n:"Medical Allowance", d:"Fixed monthly medical allowance — Assam state", a:600},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1440}
+      ]},
+    { id:"apsc", cat:"assam", name:"APSC — ACS", sub:"Assam Civil Service, Junior Grade", basic:43300, da:23815, tax:6000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%), if no house", a:8660},
+        {n:"Medical Allowance", d:"Fixed monthly medical allowance — Assam state", a:600},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:2880}
       ]}
   ];
 
@@ -332,6 +356,7 @@
     return '<div class="row ' + (cls||"") + '"><div class="n">' + (sign ? sign + " " : "") + name + '<small>' + desc + '</small></div><div class="a">' + inr(amt) + '</div></div>';
   }
 
+  var slipData = null;
   function renderSlip(){
     var j = current;
     document.getElementById("slipTitle").textContent = j.name;
@@ -340,7 +365,7 @@
     j.lines.forEach(function(l){ gross += l.a; });
     var nps = Math.round((j.basic + (j.id==="rbi" ? j.da : Math.round(j.basic * (j.id==="alp"||j.id==="guard" ? 0.60 : 0.3133)))) * 0.10);
     // Use the known NPS figures so totals match the standard breakups
-    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976 };
+    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976, assam3:3131, assam4:2465, apsc:6712 };
     nps = NPS[j.id];
     var inhand = gross - nps - j.tax;
     var h = "";
@@ -352,7 +377,66 @@
     h += row("−", "Tax", "Income tax + professional tax", j.tax, "minus");
     rowsEl.innerHTML = h;
     document.getElementById("inhandAmt").textContent = inr(inhand);
+    var items = [{ n:"Basic Pay", a:j.basic }, { n:"+ DA", a:j.da }];
+    j.lines.forEach(function(l){ items.push({ n:"+ " + l.n, a:l.a }); });
+    slipData = { name:j.name, sub:j.sub + " - per month", items:items, gross:gross, nps:nps, tax:j.tax, inhand:inhand };
   }
+
+  // Download the current payslip as a PDF file (built in the browser)
+  function pdfText(s){
+    return s.replace(/[—–]/g, "-").replace(/−/g, "-").replace(/[^\x20-\x7E]/g, "").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+  }
+  function downloadPdf(){
+    if (!slipData) return;
+    var d = slipData;
+    var ops = [];
+    function text(x, y, s, size, bold){
+      ops.push("BT /" + (bold ? "F2" : "F1") + " " + size + " Tf " + x + " " + y + " Td (" + pdfText(s) + ") Tj ET");
+    }
+    function amt(x, y, n, size, bold){
+      var s = "Rs " + Math.round(n).toLocaleString("en-IN");
+      text(x - s.length * size * 0.55, y, s, size, bold);
+    }
+    function rule(y){ ops.push("0.8 g 40 " + y + " 515 0.7 re f"); }
+    var y = 790;
+    text(40, y, "PayCalc - Salary Breakup", 18, true); y -= 26;
+    text(40, y, d.name, 14, true); y -= 18;
+    text(40, y, d.sub, 11, false); y -= 12;
+    rule(y); y -= 26;
+    d.items.forEach(function(it){ text(40, y, it.n, 11.5, false); amt(555, y, it.a, 11.5, false); y -= 20; });
+    y -= 2; rule(y); y -= 24;
+    text(40, y, "Gross - total salary before any cut", 12, true); amt(555, y, d.gross, 12, true); y -= 22;
+    text(40, y, "- NPS - pension saving", 11.5, false); amt(555, y, d.nps, 11.5, false); y -= 20;
+    text(40, y, "- Tax - income tax + professional tax", 11.5, false); amt(555, y, d.tax, 11.5, false); y -= 12;
+    rule(y); y -= 28;
+    text(40, y, "In-hand - money in your bank account", 14, true); amt(555, y, d.inhand, 14, true); y -= 34;
+    text(40, y, "Starting pay for a new joiner, per month. Tax is approximate.", 9.5, false);
+    var content = ops.join("\n");
+    var objects = [];
+    objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+    objects[2] = "<< /Type /Pages /Kids [3 0 R] /Count 1 >>";
+    objects[3] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>";
+    objects[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+    objects[5] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>";
+    objects[6] = "<< /Length " + content.length + " >>\nstream\n" + content + "\nendstream";
+    var pdf = "%PDF-1.4\n";
+    var offsets = [];
+    for (var i = 1; i <= 6; i++){ offsets[i] = pdf.length; pdf += i + " 0 obj\n" + objects[i] + "\nendobj\n"; }
+    var xref = pdf.length;
+    pdf += "xref\n0 7\n0000000000 65535 f \n";
+    for (var k = 1; k <= 6; k++){ pdf += ("0000000000" + offsets[k]).slice(-10) + " 00000 n \n"; }
+    pdf += "trailer\n<< /Size 7 /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF";
+    var blob = new Blob([pdf], { type:"application/pdf" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = d.name.replace(/[^A-Za-z0-9]+/g, "-") + "-salary.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }
+  document.getElementById("pdfBtn").addEventListener("click", downloadPdf);
 
   // Tabs: Calculator and Explain are two different views
   var tabCalc = document.getElementById("tabCalc");

@@ -1,681 +1,240 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
-    <link rel="icon" href="data:," />
-    <title>PayCalc — Salary Breakup Calculator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
-    <style>
-      :root{
-        --bg:#f4f4f1;
-        --surface:#ffffff;
-        --surface-2:#eceee9;
-        --ink:#17201b;
-        --ink-2:#4c5a52;
-        --ink-3:#7c8a81;
-        --line:#dde1da;
-        --line-strong:#c8cec4;
-        --green:#0d6e4f;
-        --green-dark:#0a573e;
-        --green-soft:#e3f2ea;
-        --amber:#b45309;
-        --amber-soft:#fdf0dd;
-        --red:#b3372c;
-        --red-soft:#fbeae8;
-        --slip:#fffdf4;
-        --slip-line:#e7dfc8;
-        --shadow:0 1px 2px rgba(23,32,27,.05),0 10px 30px rgba(23,32,27,.06);
-        --radius:16px;
-      }
-      @media (prefers-color-scheme: dark){
-        :root{
-          --bg:#10140f;
-          --surface:#1a201a;
-          --surface-2:#242b24;
-          --ink:#eef2ec;
-          --ink-2:#b3beb2;
-          --ink-3:#87957f;
-          --line:#2e382e;
-          --line-strong:#3d4a3d;
-          --green:#3ecf97;
-          --green-dark:#3ecf97;
-          --green-soft:#173427;
-          --amber:#f0b35e;
-          --amber-soft:#3a2c14;
-          --red:#f08a7d;
-          --red-soft:#3c201c;
-          --slip:#1d211a;
-          --slip-line:#3a3d2f;
-          --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);
-        }
-      }
-      *{box-sizing:border-box}
-      html{-webkit-text-size-adjust:100%}
-      body{
-        margin:0;background:var(--bg);color:var(--ink);
-        font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-        font-size:16px;line-height:1.5;
-      }
-      button,[role="button"],select,input{font-family:inherit}
-      button,select{min-height:44px}
-      .wrap{max-width:1080px;margin:0 auto;padding:20px 16px 56px}
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>PayCalc — Salary Breakup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f4f1; --surface:#ffffff; --surface2:#eceee9;
+    --ink:#17201b; --ink2:#4c5a52; --ink3:#7c8a81;
+    --line:#dde1da; --green:#0d6e4f; --green-soft:#e3f2ea;
+    --red:#b3372c; --amber-bg:#fff8e6; --amber-line:#f0dfa8; --amber-ink:#5c4a12;
+    --slip:#fffdf4; --slip-line:#e7dfc8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#10140f; --surface:#1a201a; --surface2:#242b24;
+      --ink:#eef2ec; --ink2:#b3beb2; --ink3:#87957f;
+      --line:#2e382e; --green:#3ecf97; --green-soft:#173427;
+      --red:#f08a7d; --amber-bg:#2a2410; --amber-line:#4a3f1a; --amber-ink:#f0d48a;
+      --slip:#1d211a; --slip-line:#3a3d2f;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,sans-serif;font-size:16px;line-height:1.5}
+  .wrap{max-width:600px;margin:0 auto;padding:20px 16px 40px}
+  h1{font-size:28px;line-height:1.15;margin:4px 0 6px;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--green)}
+  .sub{color:var(--ink2);margin:0 0 20px;font-size:15px}
 
-      /* ---------- Header ---------- */
-      .hero{padding:10px 2px 4px}
-      .hero h1{font-size:clamp(26px,5.4vw,40px);line-height:1.12;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
-      .hero h1 em{font-style:normal;color:var(--green)}
-      .hero p{margin:0;color:var(--ink-2);font-size:clamp(15px,2.6vw,17px);max-width:56ch}
-      .formula{
-        display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px;
-        font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13.5px;font-weight:600;
-      }
-      .formula span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px}
-      .formula b{color:var(--ink-3);font-weight:500}
-      .formula .eq-inhand{background:var(--green);border-color:var(--green);color:#fff}
-      @media (prefers-color-scheme: dark){.formula .eq-inhand{color:#0c1712}}
+  /* Tabs — Calculator vs Explain, clearly different */
+  .tabs{display:flex;background:var(--surface2);border-radius:999px;padding:4px;gap:4px;margin-bottom:20px}
+  .tabs button{flex:1;border:0;background:transparent;border-radius:999px;padding:12px 8px;font-weight:700;font-size:15px;color:var(--ink2);cursor:pointer;min-height:48px;font-family:inherit}
+  .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14)}
 
-      /* ---------- Step labels ---------- */
-      .step{display:flex;align-items:center;gap:10px;margin:30px 0 12px}
-      .step .num{
-        width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);
-        display:grid;place-items:center;font-size:13px;font-weight:700;flex:none;
-      }
-      .step h2{font-size:17px;font-weight:700;margin:0;letter-spacing:-.01em}
-      .step p{margin:0;color:var(--ink-3);font-size:13.5px}
+  /* Job picker — simple */
+  .label{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
+  .jobs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .job{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;color:var(--ink);font-family:inherit}
+  .job b{display:block;font-size:15px}
+  .job span{font-size:12.5px;color:var(--ink2)}
+  .job[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
 
-      /* ---------- Job picker ---------- */
-      .jobs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-      @media (min-width:640px){.jobs{grid-template-columns:repeat(3,1fr)}}
-      .job{
-        text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);
-        padding:14px 15px;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s;
-        display:flex;flex-direction:column;gap:2px;min-height:76px;justify-content:center;
-      }
-      .job:hover{border-color:var(--line-strong)}
-      .job .jname{font-weight:700;font-size:15.5px;display:flex;align-items:center;gap:8px}
-      .job .jsub{font-size:12.5px;color:var(--ink-2);line-height:1.35}
-      .job .jpay{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:700;color:var(--green);margin-top:4px}
-      .job[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
-      .job[aria-pressed="true"] .jname::after{content:"✓";margin-left:auto;color:var(--green);font-weight:800}
-      .tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--amber-soft);color:var(--amber);border-radius:999px;padding:2px 8px}
+  /* Payslip — calculator result */
+  .slip{background:var(--slip);border:1px solid var(--slip-line);border-radius:16px;overflow:hidden}
+  .slip-head{padding:16px 18px 12px;border-bottom:2px dashed var(--slip-line)}
+  .slip-head b{font-size:17px}
+  .slip-head span{display:block;font-size:13px;color:var(--ink2)}
+  .rows{padding:6px 18px}
+  .row{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--slip-line)}
+  .row:last-child{border-bottom:0}
+  .row .n{font-weight:600;font-size:14.5px}
+  .row .n small{display:block;font-weight:400;color:var(--ink2);font-size:12.5px;margin-top:1px}
+  .row .a{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:14.5px;white-space:nowrap}
+  .row.minus .a{color:var(--red)}
+  .row.total .n,.row.total .a{font-weight:800;font-size:16px}
+  .inhand{background:var(--green);color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  @media (prefers-color-scheme: dark){.inhand{color:#0b1712}}
+  .inhand b{font-size:16px}
+  .inhand small{display:block;font-weight:400;opacity:.85;font-size:12.5px}
+  .inhand .big{font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:700;white-space:nowrap}
 
-      /* ---------- Layout ---------- */
-      .layout{display:grid;gap:18px;margin-top:4px}
-      @media (min-width:900px){.layout{grid-template-columns:380px 1fr;align-items:start}}
+  /* Explain — visually DIFFERENT: warm list, not a payslip */
+  .explain-intro{background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber-ink);border-radius:14px;padding:14px 16px;font-size:14.5px;margin-bottom:14px}
+  .explain-intro b{color:inherit}
+  .terms{display:flex;flex-direction:column;gap:10px}
+  .term{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .term b{font-size:15px}
+  .term b span{color:var(--green)}
+  .term p{margin:4px 0 0;color:var(--ink2);font-size:14px;line-height:1.55}
+  .term .eg{margin-top:6px;font-size:13px;color:var(--ink3)}
+  .formula-box{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:13.5px;font-weight:600;line-height:2}
+  .note{margin-top:20px;font-size:12px;color:var(--ink3);line-height:1.6}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Salary, <em>simply.</em></h1>
+  <p class="sub">Pick a job. See what you get. That's it.</p>
 
-      .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-      .controls{padding:20px}
-      .controls h3{margin:0 0 4px;font-size:15px;font-weight:700}
-      .controls .hint{margin:0 0 16px;font-size:13px;color:var(--ink-2)}
-      .field{margin-bottom:18px}
-      .field:last-child{margin-bottom:0}
-      .field label{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;font-weight:600;margin-bottom:7px;gap:10px}
-      .field label small{font-weight:500;color:var(--ink-3);font-size:12px;text-align:right}
-      .money-input{display:flex;align-items:center;border:1.5px solid var(--line-strong);border-radius:12px;overflow:hidden;background:var(--surface)}
-      .money-input:focus-within{border-color:var(--green)}
-      .money-input .rs{padding:0 4px 0 14px;font-family:"IBM Plex Mono",monospace;font-weight:700;color:var(--ink-2)}
-      .money-input input{border:0;outline:0;background:transparent;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:700;width:100%;padding:11px 12px 11px 2px;min-height:48px}
-      .pct-row{display:flex;gap:10px}
-      .pct-box{flex:1;display:flex;align-items:center;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface)}
-      .pct-box:focus-within{border-color:var(--green)}
-      .pct-box input{border:0;outline:0;background:transparent;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:700;width:100%;padding:10px 4px 10px 13px;min-height:46px}
-      .pct-box .pc{padding-right:13px;font-weight:700;color:var(--ink-2)}
-      input[type="range"]{width:100%;accent-color:var(--green);height:36px;margin:2px 0 0;cursor:pointer}
-      .seg{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;gap:4px}
-      .seg button{
-        flex:1;border:0;background:transparent;border-radius:9px;cursor:pointer;color:var(--ink-2);
-        font-weight:600;font-size:14px;padding:8px 4px;min-height:42px;
-      }
-      .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-      .seg button small{display:block;font-size:11px;font-weight:500;color:var(--ink-3)}
-      .add-row{display:flex;gap:8px;margin-top:6px}
-      .add-btn{
-        flex:1;border:1.5px dashed var(--line-strong);background:transparent;color:var(--ink-2);
-        border-radius:12px;font-weight:600;font-size:13.5px;cursor:pointer;padding:10px 6px;min-height:44px;
-      }
-      .add-btn:hover{border-color:var(--green);color:var(--green)}
-      .extra-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-      .extra-item{display:flex;gap:8px;align-items:center}
-      .extra-item input[type="text"]{flex:1.4;min-width:0;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:9px 11px;font-size:14px;min-height:42px}
-      .extra-item input[type="number"]{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:9px 11px;font-size:14px;font-family:"IBM Plex Mono",monospace;min-height:42px}
-      .extra-item .rm{border:0;background:var(--red-soft);color:var(--red);border-radius:10px;width:42px;height:42px;flex:none;cursor:pointer;font-size:17px;font-weight:700}
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <button type="button" role="tab" id="tabCalc" aria-selected="true">🧮 &nbsp;Calculator</button>
+    <button type="button" role="tab" id="tabExplain" aria-selected="false">📖 &nbsp;What is what?</button>
+  </div>
 
-      /* ---------- Payslip ---------- */
-      .slip{background:var(--slip);border:1px solid var(--slip-line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-      .slip-head{padding:18px 20px 14px;border-bottom:2px dashed var(--slip-line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-      .slip-head .who{font-weight:800;font-size:18px;letter-spacing:-.01em}
-      .slip-head .whosub{font-size:13px;color:var(--ink-2);margin-top:2px}
-      .period{display:flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:3px}
-      .period button{border:0;background:transparent;border-radius:999px;padding:6px 14px;font-weight:600;font-size:13px;color:var(--ink-2);cursor:pointer;min-height:38px}
-      .period button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
-      .slip-body{padding:8px 20px 4px}
-      .line{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--slip-line);align-items:flex-start}
-      .line:last-child{border-bottom:0}
-      .line .sign{font-family:"IBM Plex Mono",monospace;font-weight:700;width:18px;flex:none;text-align:center;color:var(--ink-3);padding-top:1px}
-      .line.plus .sign{color:var(--green)}
-      .line.minus .sign{color:var(--red)}
-      .line .main{flex:1;min-width:0}
-      .line .name{font-weight:600;font-size:15px}
-      .line .name .rate{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--ink-3);margin-left:6px;white-space:nowrap}
-      .line .desc{font-size:12.5px;color:var(--ink-2);line-height:1.4;margin-top:1px}
-      .line .amt{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:15.5px;white-space:nowrap;padding-top:1px}
-      .line.minus .amt{color:var(--red)}
-      .total-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--slip-line)}
-      .total-row .tname{font-weight:800;font-size:15.5px}
-      .total-row .tdesc{font-size:12.5px;color:var(--ink-2)}
-      .total-row .tamt{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:18px;white-space:nowrap}
-      .slip-foot{background:var(--green);color:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-      @media (prefers-color-scheme: dark){.slip-foot{color:#0b1712}}
-      .slip-foot .flabel{font-weight:800;font-size:17px}
-      .slip-foot .fdesc{font-size:12.5px;opacity:.85;margin-top:1px;max-width:34ch}
-      .slip-foot .famt{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:clamp(26px,6vw,34px);letter-spacing:-.01em;white-space:nowrap}
-      .slip-actions{display:flex;gap:10px;padding:14px 20px 18px;flex-wrap:wrap}
-      .btn{
-        border-radius:12px;font-weight:700;font-size:14.5px;cursor:pointer;padding:11px 18px;min-height:46px;
-        border:1.5px solid var(--green);background:var(--green);color:#fff;
-      }
-      @media (prefers-color-scheme: dark){.btn{color:#0b1712}}
-      .btn.ghost{background:transparent;color:var(--green)}
-      .btn:active{transform:translateY(1px)}
-      .copied{font-size:13.5px;color:var(--green);font-weight:600;align-self:center;display:none}
+  <!-- ============ CALCULATOR (only numbers) ============ -->
+  <section id="panelCalc" role="tabpanel" aria-label="Calculator">
+    <p class="label">1 — Tap a job</p>
+    <div class="jobs" id="jobs"></div>
 
-      /* ---------- Compare ---------- */
-      .compare{display:grid;gap:10px;grid-template-columns:1fr}
-      @media (min-width:640px){.compare{grid-template-columns:repeat(2,1fr)}}
-      @media (min-width:1000px){.compare{grid-template-columns:repeat(3,1fr)}}
-      .cmp{
-        background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);padding:15px 16px;
-        cursor:pointer;text-align:left;color:var(--ink);width:100%;
-      }
-      .cmp:hover{border-color:var(--line-strong)}
-      .cmp[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
-      .cmp .cname{font-weight:700;font-size:15px}
-      .cmp .csub{font-size:12.5px;color:var(--ink-2)}
-      .cmp .crow{display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--ink-2)}
-      .cmp .crow b{font-family:"IBM Plex Mono",monospace;color:var(--ink)}
-      .cmp .crow.inhand b{color:var(--green);font-size:16px}
-      .bar{height:7px;border-radius:99px;background:var(--surface-2);margin-top:10px;overflow:hidden}
-      .bar i{display:block;height:100%;background:var(--green);border-radius:99px}
-
-      /* ---------- Glossary ---------- */
-      .glossary{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
-      .g-item{padding:15px 18px;border-bottom:1px solid var(--line);display:grid;gap:3px}
-      @media (min-width:760px){.g-item{grid-template-columns:210px 1fr;gap:16px;align-items:baseline}}
-      .g-item:last-child{border-bottom:0}
-      .g-item .gname{font-weight:700;font-size:15px}
-      .g-item .gname span{color:var(--green)}
-      .g-item p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.55}
-
-      .note{margin-top:26px;font-size:12.5px;color:var(--ink-3);line-height:1.6;max-width:78ch}
-      .note b{color:var(--ink-2)}
-      .hidden{display:none !important}
-    </style>
-  </head>
-  <body>
-    <main class="wrap">
-
-      <header class="hero">
-        <h1>What will you <em>actually</em> take home?</h1>
-        <p>Pick a job, adjust the numbers, and see the full salary breakup — every allowance added, every deduction cut, in plain words.</p>
-        <div class="formula" aria-hidden="true">
-          <span>Basic Pay</span><b>+</b><span>DA</span><b>+</b><span>HRA</span><b>+</b><span>Allowances</span><b>=</b><span>Gross</span><b>−</b><span>NPS &amp; Tax</span><b>=</b><span class="eq-inhand">In-hand</span>
-        </div>
-      </header>
-
-      <!-- STEP 1 : JOB -->
-      <div class="step"><span class="num">1</span><h2>Pick a job</h2><p>— starting pay, entry level</p></div>
-      <div class="jobs" id="jobPicker" role="group" aria-label="Choose a job"></div>
-
-      <!-- STEP 2 + SLIP -->
-      <div class="step"><span class="num">2</span><h2>Adjust &amp; see your payslip</h2><p>— everything updates live</p></div>
-      <div class="layout">
-
-        <section class="card controls" aria-label="Adjust the numbers">
-          <h3>Your numbers</h3>
-          <p class="hint">Change anything — the payslip on the right recalculates instantly.</p>
-
-          <div class="field">
-            <label for="basicInput">Basic Pay <small>fixed monthly salary of the post</small></label>
-            <div class="money-input"><span class="rs">₹</span><input id="basicInput" type="number" inputmode="numeric" min="0" step="100" /></div>
-            <input id="basicRange" type="range" min="10000" max="120000" step="100" aria-label="Basic pay slider" />
-          </div>
-
-          <div class="field">
-            <label>DA &amp; HRA rates <small>% of basic pay</small></label>
-            <div class="pct-row">
-              <div class="pct-box" title="Dearness Allowance rate"><input id="daInput" type="number" inputmode="decimal" min="0" max="100" step="0.01" aria-label="DA percent" /><span class="pc">% DA</span></div>
-              <div class="pct-box" title="House Rent Allowance rate"><input id="hraInput" type="number" inputmode="decimal" min="0" max="60" step="0.25" aria-label="HRA percent" /><span class="pc">% HRA</span></div>
-            </div>
-          </div>
-
-          <div class="field hidden" id="cityField">
-            <label>Posting city class <small>sets railway HRA</small></label>
-            <div class="seg" id="citySeg" role="group" aria-label="City class">
-              <button type="button" data-city="X">X — Metro<small>30% HRA</small></button>
-              <button type="button" data-city="Y">Y — Big city<small>20% HRA · Guwahati</small></button>
-              <button type="button" data-city="Z">Z — Small town<small>10% HRA</small></button>
-            </div>
-          </div>
-
-          <div class="field hidden" id="kmField">
-            <label for="kmInput">Kilometres run this month <small>running staff only</small></label>
-            <div class="money-input"><span class="rs">km</span><input id="kmInput" type="number" inputmode="numeric" min="0" max="8000" step="50" /></div>
-            <input id="kmRange" type="range" min="0" max="6000" step="50" aria-label="Kilometres slider" />
-          </div>
-
-          <div class="field">
-            <label for="taxInput">Income tax + professional tax <small>per month, approx.</small></label>
-            <div class="money-input"><span class="rs">₹</span><input id="taxInput" type="number" inputmode="numeric" min="0" step="50" /></div>
-          </div>
-
-          <div class="field">
-            <label>Add your own <small>any extra head</small></label>
-            <div class="add-row">
-              <button type="button" class="add-btn" id="addEarn">+ Allowance</button>
-              <button type="button" class="add-btn" id="addDed">+ Deduction</button>
-            </div>
-            <div class="extra-list" id="extraList"></div>
-          </div>
-        </section>
-
-        <section class="slip" aria-label="Your payslip">
-          <div class="slip-head">
-            <div>
-              <div class="who" id="slipTitle">—</div>
-              <div class="whosub" id="slipSub">—</div>
-            </div>
-            <div class="period" role="group" aria-label="Period">
-              <button type="button" id="perMonth" aria-pressed="true">Monthly</button>
-              <button type="button" id="perYear" aria-pressed="false">Yearly</button>
-            </div>
-          </div>
-          <div class="slip-body" id="slipBody"></div>
-          <div class="slip-foot">
-            <div>
-              <div class="flabel" id="footLabel">In-hand salary</div>
-              <div class="fdesc">The money that actually lands in your bank account.</div>
-            </div>
-            <div class="famt" id="footAmt">₹0</div>
-          </div>
-          <div class="slip-actions">
-            <button type="button" class="btn" id="copyBtn">Copy this breakup</button>
-            <button type="button" class="btn ghost" id="resetBtn">Reset to standard pay</button>
-            <span class="copied" id="copiedMsg">Copied ✓ Paste it anywhere.</span>
-          </div>
-        </section>
+    <p class="label">2 — Your salary</p>
+    <div class="slip">
+      <div class="slip-head"><b id="slipTitle">—</b><span id="slipSub">Per month</span></div>
+      <div class="rows" id="rows"></div>
+      <div class="inhand">
+        <div><b>In-hand</b><small>Money in your bank account</small></div>
+        <div class="big" id="inhandAmt">₹0</div>
       </div>
+    </div>
+    <p class="note">Starting pay for a new joiner. Bank: 12th Bipartite Settlement, DA 31.33%. Railway: 60% DA, 3,500 km run in the month. Tax is approximate.</p>
+  </section>
 
-      <!-- COMPARE -->
-      <div class="step"><span class="num">3</span><h2>All jobs, side by side</h2><p>— tap any card to open it above</p></div>
-      <div class="compare" id="compareGrid"></div>
+  <!-- ============ EXPLAIN (only meanings, no calculator) ============ -->
+  <section id="panelExplain" role="tabpanel" aria-label="What each word means" class="hidden">
+    <div class="explain-intro">This section is <b>only meanings</b> — no numbers to change, nothing to calculate. Read it once, then go back to the Calculator tab.</div>
 
-      <!-- GLOSSARY -->
-      <div class="step"><span class="num">?</span><h2>What each word means</h2></div>
-      <div class="glossary">
-        <div class="g-item"><div class="gname"><span>Basic Pay</span></div><p>The fixed monthly salary of your post, decided by your pay level or pay scale. Everything else — DA, HRA, NPS — is calculated from this one number, so a higher basic lifts the whole salary.</p></div>
-        <div class="g-item"><div class="gname"><span>DA</span> — Dearness Allowance</div><p>Money to fight price rise (inflation). Central government and railway DA is 60% of basic right now and rises every January and July. Bank DA is 31.33% and changes every 3 months — lower in percentage only because a big part of it was merged into bank basic pay in the 12th Bipartite Settlement.</p></div>
-        <div class="g-item"><div class="gname"><span>HRA</span> — House Rent Allowance</div><p>Money for house rent, paid when the employer doesn't give you a house or quarters. Central government pays 30% / 20% / 10% of basic by city size (X / Y / Z). Banks pay a flat 10.25% everywhere; RBI pays 15%.</p></div>
-        <div class="g-item"><div class="gname"><span>TA</span> — Transport Allowance</div><p>A fixed monthly amount for your daily travel to duty. DA is also paid on top of it in most jobs.</p></div>
-        <div class="g-item"><div class="gname"><span>Special Allowance</span> — banks</div><p>An extra 26.5% of basic pay given under the bank wage settlement. One catch: it does not count towards your pension (NPS).</p></div>
-        <div class="g-item"><div class="gname"><span>Running Allowance</span> — railways</div><p>Paid only to running staff (loco pilots and guards) for every kilometre actually run — e.g. ₹430 per 100 km for an ALP, ₹537 per 100 km for a Goods Guard. Run more, earn more; that is why a guard's salary swings month to month.</p></div>
-        <div class="g-item"><div class="gname"><span>NPS</span> — pension deduction</div><p>10% of your (Basic + DA) is cut from your salary every month and put into your National Pension System account. Your employer adds another 14% from its side. You get it back as pension after retirement.</p></div>
-        <div class="g-item"><div class="gname"><span>Gross</span> vs <span>In-hand</span></div><p>Gross is everything added together before any cut: Basic + DA + HRA + all allowances. In-hand is what reaches your bank account after NPS, income tax and professional tax are deducted. Websites usually quote gross; employees talk about in-hand.</p></div>
-      </div>
+    <div class="terms">
+      <div class="term"><b><span>Basic Pay</span></b><p>The fixed salary of your post. Everything else is calculated from this number.</p></div>
+      <div class="term"><b><span>DA</span> — Dearness Allowance</b><p>Extra money because prices keep rising. When things get costlier, DA goes up.</p><p class="eg">Bank DA changes every 3 months. Government DA changes every 6 months.</p></div>
+      <div class="term"><b><span>HRA</span> — House Rent Allowance</b><p>Money for house rent. Paid only if your office does not give you a house.</p></div>
+      <div class="term"><b><span>TA</span> — Transport Allowance</b><p>Money for travelling to office every day.</p></div>
+      <div class="term"><b>Special Allowance <span>— bank only</span></b><p>An extra percentage of Basic Pay, given in bank jobs. Not counted for pension.</p></div>
+      <div class="term"><b>Special Pay <span>— bank clerk only</span></b><p>Extra money for working at the customer desk.</p></div>
+      <div class="term"><b>Grade Allowance + LCA <span>— RBI only</span></b><p>RBI's own extra allowances. Other banks do not give these — one reason RBI pays more.</p></div>
+      <div class="term"><b>Running Allowance <span>— railway only</span></b><p>Money for every kilometre the train runs. Only drivers and guards get it. Run more km, get more money.</p></div>
+      <div class="term"><b><span>Gross</span></b><p>Basic Pay + DA + HRA + all allowances added together. This is <b>before</b> any cut.</p></div>
+      <div class="term"><b><span>NPS</span> — Pension cut</b><p>10% is cut from your salary and saved for your pension. Your office adds 14% more from its side.</p></div>
+      <div class="term"><b><span>Tax</span></b><p>Money paid to the government from your salary, plus a small professional tax.</p></div>
+      <div class="term"><b><span>In-hand</span></b><p>Gross minus NPS minus Tax. This is the money that actually comes to your bank account.</p></div>
+    </div>
 
-      <p class="note"><b>About these numbers:</b> Bank figures use the 12th Bipartite Settlement (DA 31.33% for Nov 2026 – Jan 2027); railway figures use 7th CPC with 60% DA and kilometrage rates revised March 2026; RBI Assistant basic ₹29,000 as per the revised 2026 scale. Clerk figures are for a graduate entrant (2 advance increments). Tax is an approximate monthly average under the new tax regime — your exact tax depends on your total yearly income. This is an explainer tool, not an official payslip.</p>
+    <div class="formula-box">Basic Pay + DA + HRA + Allowances<br>= Gross<br>Gross − NPS − Tax = In-hand</div>
 
-    </main>
+    <p class="note">Are the heads the same for every job? No. Basic Pay + DA + HRA + TA are common everywhere. The extra heads are different — bank has Special Allowance, RBI has Grade Allowance + LCA, railway has Running Allowance.</p>
+  </section>
+</main>
 
-    <script>
-      // ---------------- Data ----------------
-      // comp calc types: pct (of basic), flat, perKm (rate per 100 km), daBase handled centrally
-      var PRESETS = [
-        {
-          id:"clerk", name:"IBPS Clerk", sub:"Bank clerk · graduate entry · Guwahati",
-          tag:"Bank", basic:26730, daRate:31.33, daOn:["special_allow","special_pay","ta"],
-          tax:760,
-          comps:[
-            {id:"special_allow", name:"Special Allowance", desc:"Extra 26.5% of basic, given in the bank settlement", type:"pct", rate:26.5},
-            {id:"special_pay", name:"Special Pay (CSA)", desc:"Extra for customer desk work", type:"flat", amount:1970},
-            {id:"ta", name:"Transport Allowance", desc:"Money for coming to office daily", type:"flat", amount:850},
-            {id:"hra", name:"HRA", desc:"House Rent Allowance — money for house rent", type:"pct", rate:10.25}
-          ]
-        },
-        {
-          id:"rbi", name:"RBI Assistant", sub:"Reserve Bank · if no accommodation given",
-          tag:"Bank", basic:29000, daRate:49.35, daOn:[],
-          tax:2245,
-          comps:[
-            {id:"grade", name:"Grade Allowance", desc:"RBI's own extra allowance", type:"flat", amount:3500},
-            {id:"ta", name:"Transport Allowance", desc:"Money for coming to office daily", type:"flat", amount:1200},
-            {id:"hra", name:"HRA", desc:"House Rent Allowance — money for house rent (15% at RBI)", type:"pct", rate:15},
-            {id:"lca", name:"LCA", desc:"Local Compensatory Allowance — extra for costly cities", type:"flat", amount:2886},
-            {id:"other", name:"Other Allowances", desc:"Small miscellaneous allowances", type:"flat", amount:3475}
-          ]
-        },
-        {
-          id:"po", name:"IBPS PO", sub:"Bank officer · JMGS-I · approximate",
-          tag:"Bank", basic:48480, daRate:31.33, daOn:["special_allow"],
-          tax:6000,
-          comps:[
-            {id:"special_allow", name:"Special Allowance", desc:"Extra 26.5% of basic, given in the bank settlement", type:"pct", rate:26.5},
-            {id:"hra", name:"HRA", desc:"House Rent Allowance — money for house rent", type:"pct", rate:10.25}
-          ]
-        },
-        {
-          id:"alp", name:"Railway ALP", sub:"Assistant Loco Pilot · Level 2 · running staff",
-          tag:"Railway", basic:19900, daRate:60, daOn:[], city:true, kmRate:430, kmDefault:3500,
-          tax:900,
-          comps:[
-            {id:"hra", name:"HRA", desc:"House Rent Allowance — money for house rent (by city class)", type:"pct", rate:20},
-            {id:"ta", name:"Transport Allowance", desc:"₹900 + DA on it — money for coming to duty", type:"flat", amount:1440},
-            {id:"running", name:"Running Allowance", desc:"Kilometrage money — paid per km actually run", type:"perKm"}
-          ]
-        },
-        {
-          id:"guard", name:"Railway Guard", sub:"Goods Guard / Train Manager · Level 5 · running staff",
-          tag:"Railway", basic:29200, daRate:60, daOn:[], city:true, kmRate:537, kmDefault:3500,
-          tax:2500,
-          comps:[
-            {id:"hra", name:"HRA", desc:"House Rent Allowance — money for house rent (by city class)", type:"pct", rate:20},
-            {id:"ta", name:"Transport Allowance", desc:"₹1,800 + DA on it — money for coming to duty", type:"flat", amount:2880},
-            {id:"running", name:"Running Allowance", desc:"Kilometrage money — paid per km actually run", type:"perKm"}
-          ]
-        },
-        {
-          id:"custom", name:"Custom Job", sub:"Any job — set your own heads",
-          tag:"Custom", basic:30000, daRate:30, daOn:[],
-          tax:1000,
-          comps:[
-            {id:"hra", name:"HRA", desc:"House Rent Allowance — money for house rent", type:"pct", rate:20},
-            {id:"ta", name:"Transport Allowance", desc:"Money for coming to office daily", type:"flat", amount:1800}
-          ]
-        }
-      ];
+<script>
+  var JOBS = [
+    { id:"clerk", name:"IBPS Clerk", sub:"Bank clerk", basic:26730, da:11477, tax:760,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:2740},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:7083},
+        {n:"Special Pay", d:"Extra for customer desk work", a:1970},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:850}
+      ]},
+    { id:"rbi", name:"RBI Assistant", sub:"Reserve Bank of India", basic:29000, da:14311, tax:2245,
+      lines:[
+        {n:"Grade Allowance", d:"RBI's own extra allowance", a:3500},
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:4142},
+        {n:"LCA", d:"Local Compensatory Allowance — extra for costly cities", a:2886},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1200},
+        {n:"Other Allowances", d:"Small miscellaneous allowances", a:3475}
+      ]},
+    { id:"po", name:"IBPS PO", sub:"Bank officer", basic:48480, da:19214, tax:6000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:4969},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:12847}
+      ]},
+    { id:"alp", name:"Railway ALP", sub:"Assistant Loco Pilot", basic:19900, da:11940, tax:900,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3980},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:1440},
+        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:15050}
+      ]},
+    { id:"guard", name:"Railway Guard", sub:"Goods Guard / Train Manager", basic:29200, da:17520, tax:2500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:5840},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880},
+        {n:"Running Allowance", d:"Kilometrage — 3,500 km run this month", a:18795}
+      ]},
+    { id:"rrb", name:"RRB Assistant", sub:"Same pay as IBPS Clerk", basic:26730, da:11477, tax:760,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:2740},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:7083},
+        {n:"Special Pay", d:"Extra for customer desk work", a:1970},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:850}
+      ]}
+  ];
 
-      // ---------------- State ----------------
-      var state = null;
-      var period = "month"; // or "year"
+  function inr(n){ return "₹" + Math.round(n).toLocaleString("en-IN"); }
+  var current = JOBS[0];
+  var jobsEl = document.getElementById("jobs");
+  var rowsEl = document.getElementById("rows");
 
-      function clonePreset(p){
-        return {
-          presetId:p.id, name:p.name, sub:p.sub, tag:p.tag,
-          basic:p.basic, daRate:p.daRate, daOn:p.daOn.slice(),
-          tax:p.tax, city:p.city ? "Y" : null,
-          kmRate:p.kmRate || 0, km:(p.kmDefault || 0),
-          comps:p.comps.map(function(c){ return Object.assign({}, c); }),
-          extrasE:[], extrasD:[]
-        };
-      }
+  function renderJobs(){
+    jobsEl.innerHTML = "";
+    JOBS.forEach(function(j){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "job";
+      b.setAttribute("aria-pressed", j.id === current.id ? "true" : "false");
+      b.innerHTML = "<b>" + j.name + "</b><span>" + j.sub + "</span>";
+      b.addEventListener("click", function(){ current = j; renderJobs(); renderSlip(); });
+      jobsEl.appendChild(b);
+    });
+  }
 
-      // ---------------- Calc ----------------
-      function compAmount(c, s){
-        if(c.type === "pct") return Math.round(s.basic * c.rate / 100);
-        if(c.type === "flat") return c.amount;
-        if(c.type === "perKm") return Math.round(s.km / 100 * s.kmRate);
-        return 0;
-      }
-      function calc(s){
-        var amounts = {};
-        s.comps.forEach(function(c){ amounts[c.id] = compAmount(c, s); });
-        // DA base = basic + listed components
-        var daBase = s.basic;
-        s.daOn.forEach(function(id){ if(amounts[id] != null) daBase += amounts[id]; });
-        var da = Math.round(daBase * s.daRate / 100);
-        var daOnBasic = Math.round(s.basic * s.daRate / 100);
-        var gross = s.basic + da;
-        s.comps.forEach(function(c){ gross += amounts[c.id]; });
-        var extraE = 0; s.extrasE.forEach(function(e){ extraE += (e.amount||0); });
-        var extraD = 0; s.extrasD.forEach(function(e){ extraD += (e.amount||0); });
-        gross += extraE;
-        var nps = Math.round((s.basic + s.basic * s.daRate / 100) * 0.10);
-        var totalDed = nps + s.tax + extraD;
-        var inhand = gross - totalDed;
-        return { amounts:amounts, da:da, daOnBasic:daOnBasic, gross:gross, nps:nps, extraE:extraE, extraD:extraD, totalDed:totalDed, inhand:inhand };
-      }
+  function row(sign, name, desc, amt, cls){
+    return '<div class="row ' + (cls||"") + '"><div class="n">' + (sign ? sign + " " : "") + name + '<small>' + desc + '</small></div><div class="a">' + inr(amt) + '</div></div>';
+  }
 
-      // ---------------- Format ----------------
-      function inr(n){
-        var neg = n < 0; n = Math.abs(Math.round(n));
-        var s = n.toLocaleString("en-IN");
-        return (neg ? "−₹" : "₹") + s;
-      }
-      function shown(n){ return period === "year" ? n * 12 : n; }
-      function fmt(n){ return inr(shown(n)); }
+  function renderSlip(){
+    var j = current;
+    document.getElementById("slipTitle").textContent = j.name;
+    document.getElementById("slipSub").textContent = j.sub + " · per month";
+    var gross = j.basic + j.da;
+    j.lines.forEach(function(l){ gross += l.a; });
+    var nps = Math.round((j.basic + (j.id==="rbi" ? j.da : Math.round(j.basic * (j.id==="alp"||j.id==="guard" ? 0.60 : 0.3133)))) * 0.10);
+    // Use the known NPS figures so totals match the standard breakups
+    var NPS = { clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510 };
+    nps = NPS[j.id];
+    var inhand = gross - nps - j.tax;
+    var h = "";
+    h += row("", "Basic Pay", "Fixed monthly salary of the post", j.basic);
+    h += row("+", "DA", "Dearness Allowance — money to fight price rise", j.da);
+    j.lines.forEach(function(l){ h += row("+", l.n, l.d, l.a); });
+    h += row("", "Gross", "Total salary before any cut", gross, "total");
+    h += row("−", "NPS", "Pension saving — 10% cut from your salary", nps, "minus");
+    h += row("−", "Tax", "Income tax + professional tax", j.tax, "minus");
+    rowsEl.innerHTML = h;
+    document.getElementById("inhandAmt").textContent = inr(inhand);
+  }
 
-      // ---------------- DOM ----------------
-      var $ = function(id){ return document.getElementById(id); };
-      var jobPicker = $("jobPicker"), slipBody = $("slipBody"), compareGrid = $("compareGrid");
+  // Tabs: Calculator and Explain are two different views
+  var tabCalc = document.getElementById("tabCalc");
+  var tabExplain = document.getElementById("tabExplain");
+  var panelCalc = document.getElementById("panelCalc");
+  var panelExplain = document.getElementById("panelExplain");
+  function show(which){
+    var isCalc = which === "calc";
+    tabCalc.setAttribute("aria-selected", isCalc ? "true" : "false");
+    tabExplain.setAttribute("aria-selected", isCalc ? "false" : "true");
+    panelCalc.classList.toggle("hidden", !isCalc);
+    panelExplain.classList.toggle("hidden", isCalc);
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+  tabCalc.addEventListener("click", function(){ show("calc"); });
+  tabExplain.addEventListener("click", function(){ show("explain"); });
 
-      function hraComp(s){ return s.comps.find(function(c){ return c.id === "hra"; }); }
-
-      function renderPicker(){
-        jobPicker.innerHTML = "";
-        PRESETS.forEach(function(p){
-          var r = calc(clonePreset(p));
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "job";
-          b.setAttribute("aria-pressed", state && state.presetId === p.id ? "true" : "false");
-          b.innerHTML = '<span class="jname">' + p.name + ' <span class="tag">' + p.tag + '</span></span>' +
-                        '<span class="jsub">' + p.sub + '</span>' +
-                        '<span class="jpay">≈ ' + inr(r.inhand) + ' / month in-hand</span>';
-          b.addEventListener("click", function(){ selectPreset(p.id); });
-          jobPicker.appendChild(b);
-        });
-      }
-
-      function renderCompare(){
-        var results = PRESETS.map(function(p){ return { p:p, r:calc(clonePreset(p)) }; });
-        var max = Math.max.apply(null, results.map(function(x){ return x.r.inhand; }));
-        compareGrid.innerHTML = "";
-        results.forEach(function(x){
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "cmp";
-          b.setAttribute("aria-pressed", state && state.presetId === x.p.id ? "true" : "false");
-          var pct = Math.max(4, Math.round(x.r.inhand / max * 100));
-          b.innerHTML =
-            '<div class="cname">' + x.p.name + '</div>' +
-            '<div class="csub">' + x.p.sub + '</div>' +
-            '<div class="crow"><span>Gross</span><b>' + inr(x.r.gross) + '</b></div>' +
-            '<div class="crow"><span>− NPS &amp; tax</span><b>' + inr(x.r.totalDed) + '</b></div>' +
-            '<div class="crow inhand"><span>In-hand / month</span><b>' + inr(x.r.inhand) + '</b></div>' +
-            '<div class="bar"><i style="width:' + pct + '%"></i></div>';
-          b.addEventListener("click", function(){
-            selectPreset(x.p.id);
-            window.scrollTo({ top:0, behavior:"smooth" });
-          });
-          compareGrid.appendChild(b);
-        });
-      }
-
-      function lineHTML(sign, cls, name, rateTxt, desc, amt){
-        return '<div class="line ' + cls + '"><span class="sign">' + sign + '</span>' +
-          '<div class="main"><div class="name">' + name + (rateTxt ? '<span class="rate">' + rateTxt + '</span>' : '') + '</div>' +
-          (desc ? '<div class="desc">' + desc + '</div>' : '') + '</div>' +
-          '<div class="amt">' + fmt(amt) + '</div></div>';
-      }
-
-      function renderSlip(){
-        var s = state, r = calc(s);
-        $("slipTitle").textContent = s.name;
-        $("slipSub").textContent = s.sub + (period === "year" ? " · yearly view (monthly × 12)" : " · per month");
-        var h = "";
-        h += lineHTML("", "", "Basic Pay", "", "Fixed monthly salary of the post", s.basic);
-        var daDesc = "Dearness Allowance — money to fight price rise" +
-          (s.daOn.length ? " · on Basic + Special Allowance + Special Pay + TA" : " · on basic pay");
-        h += lineHTML("+", "plus", "DA", s.daRate + "%", daDesc, r.da);
-        s.comps.forEach(function(c){
-          var rateTxt = "";
-          if(c.type === "pct") rateTxt = c.rate + "% of basic";
-          if(c.type === "perKm") rateTxt = "₹" + s.kmRate + " / 100 km × " + Number(s.km).toLocaleString("en-IN") + " km";
-          h += lineHTML("+", "plus", c.name, rateTxt, c.desc, r.amounts[c.id]);
-        });
-        s.extrasE.forEach(function(e){
-          h += lineHTML("+", "plus", e.name || "Other allowance", "", "Added by you", e.amount || 0);
-        });
-        h += '<div class="total-row"><div><div class="tname">Gross Salary</div><div class="tdesc">Total salary before any cut</div></div><div class="tamt">' + fmt(r.gross) + '</div></div>';
-        h += lineHTML("−", "minus", "NPS", "10%", "Pension saving — cut from your salary, employer adds 14% more", r.nps);
-        h += lineHTML("−", "minus", "Income Tax + Professional Tax", "", "Tax paid to the government (approx.)", s.tax);
-        s.extrasD.forEach(function(e){
-          h += lineHTML("−", "minus", e.name || "Other deduction", "", "Added by you", e.amount || 0);
-        });
-        slipBody.innerHTML = h;
-        $("footLabel").textContent = period === "year" ? "In-hand salary · per year" : "In-hand salary";
-        $("footAmt").textContent = fmt(r.inhand);
-      }
-
-      function renderExtras(){
-        var list = $("extraList"); list.innerHTML = "";
-        function row(item, kind, idx){
-          var d = document.createElement("div"); d.className = "extra-item";
-          var n = document.createElement("input"); n.type = "text"; n.value = item.name; n.placeholder = kind === "E" ? "Allowance name" : "Deduction name";
-          n.setAttribute("aria-label", "Name");
-          var a = document.createElement("input"); a.type = "number"; a.value = item.amount || ""; a.placeholder = "₹ amount"; a.min = "0"; a.inputMode = "numeric";
-          a.setAttribute("aria-label", "Amount per month");
-          var rm = document.createElement("button"); rm.type = "button"; rm.className = "rm"; rm.textContent = "×"; rm.setAttribute("aria-label", "Remove");
-          n.addEventListener("input", function(){ item.name = n.value; renderSlip(); });
-          a.addEventListener("input", function(){ item.amount = parseFloat(a.value) || 0; renderSlip(); renderPickerSoft(); });
-          rm.addEventListener("click", function(){
-            if(kind === "E") state.extrasE.splice(idx, 1); else state.extrasD.splice(idx, 1);
-            renderExtras(); renderSlip();
-          });
-          d.appendChild(n); d.appendChild(a); d.appendChild(rm);
-          list.appendChild(d);
-        }
-        state.extrasE.forEach(function(e, i){ row(e, "E", i); });
-        state.extrasD.forEach(function(e, i){ row(e, "D", i); });
-      }
-
-      function syncControls(){
-        var s = state;
-        $("basicInput").value = s.basic;
-        $("basicRange").value = Math.min(120000, Math.max(10000, s.basic));
-        $("daInput").value = s.daRate;
-        var hra = hraComp(s);
-        $("hraInput").value = hra ? hra.rate : 0;
-        $("taxInput").value = s.tax;
-        $("cityField").classList.toggle("hidden", !s.city);
-        var hasKm = s.comps.some(function(c){ return c.type === "perKm"; });
-        $("kmField").classList.toggle("hidden", !hasKm);
-        if(hasKm){ $("kmInput").value = s.km; $("kmRange").value = s.km; }
-        if(s.city){
-          var btns = $("citySeg").querySelectorAll("button");
-          btns.forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-city") === s.city ? "true" : "false"); });
-        }
-      }
-
-      function renderAll(){ syncControls(); renderSlip(); renderExtras(); renderPicker(); renderCompare(); }
-      function renderPickerSoft(){ renderPicker(); renderCompare(); }
-
-      function selectPreset(id){
-        var p = PRESETS.find(function(x){ return x.id === id; });
-        state = clonePreset(p);
-        period = "month";
-        $("perMonth").setAttribute("aria-pressed", "true");
-        $("perYear").setAttribute("aria-pressed", "false");
-        renderAll();
-      }
-
-      // ---------------- Events ----------------
-      $("basicInput").addEventListener("input", function(){
-        state.basic = Math.max(0, parseFloat(this.value) || 0);
-        $("basicRange").value = Math.min(120000, Math.max(10000, state.basic));
-        renderSlip();
-      });
-      $("basicRange").addEventListener("input", function(){
-        state.basic = parseFloat(this.value) || 0;
-        $("basicInput").value = state.basic;
-        renderSlip();
-      });
-      $("daInput").addEventListener("input", function(){
-        state.daRate = Math.max(0, parseFloat(this.value) || 0);
-        renderSlip();
-      });
-      $("hraInput").addEventListener("input", function(){
-        var hra = hraComp(state);
-        if(hra){ hra.rate = Math.max(0, parseFloat(this.value) || 0); renderSlip(); }
-      });
-      $("taxInput").addEventListener("input", function(){
-        state.tax = Math.max(0, parseFloat(this.value) || 0);
-        renderSlip();
-      });
-      $("kmInput").addEventListener("input", function(){
-        state.km = Math.max(0, parseFloat(this.value) || 0);
-        $("kmRange").value = Math.min(6000, state.km);
-        renderSlip();
-      });
-      $("kmRange").addEventListener("input", function(){
-        state.km = parseFloat(this.value) || 0;
-        $("kmInput").value = state.km;
-        renderSlip();
-      });
-      $("citySeg").querySelectorAll("button").forEach(function(b){
-        b.addEventListener("click", function(){
-          state.city = b.getAttribute("data-city");
-          var hra = hraComp(state);
-          if(hra) hra.rate = state.city === "X" ? 30 : state.city === "Y" ? 20 : 10;
-          syncControls(); renderSlip();
-        });
-      });
-      $("perMonth").addEventListener("click", function(){
-        period = "month";
-        this.setAttribute("aria-pressed", "true");
-        $("perYear").setAttribute("aria-pressed", "false");
-        renderSlip();
-      });
-      $("perYear").addEventListener("click", function(){
-        period = "year";
-        this.setAttribute("aria-pressed", "true");
-        $("perMonth").setAttribute("aria-pressed", "false");
-        renderSlip();
-      });
-      $("addEarn").addEventListener("click", function(){
-        state.extrasE.push({ name:"", amount:0 }); renderExtras(); renderSlip();
-      });
-      $("addDed").addEventListener("click", function(){
-        state.extrasD.push({ name:"", amount:0 }); renderExtras(); renderSlip();
-      });
-      $("resetBtn").addEventListener("click", function(){ selectPreset(state.presetId); });
-
-      $("copyBtn").addEventListener("click", function(){
-        var s = state, r = calc(s);
-        var L = [];
-        L.push(s.name + (period === "year" ? " (yearly)" : " (monthly)"));
-        L.push("");
-        L.push("Basic Pay " + fmt(s.basic) + " — fixed monthly salary of the post");
-        L.push("+ DA " + fmt(r.da) + " — Dearness Allowance, money to fight price rise, " + s.daRate + "%");
-        s.comps.forEach(function(c){
-          L.push("+ " + c.name + " " + fmt(r.amounts[c.id]) + " — " + c.desc);
-        });
-        s.extrasE.forEach(function(e){ L.push("+ " + (e.name || "Other allowance") + " " + fmt(e.amount || 0)); });
-        L.push("= Gross " + fmt(r.gross) + " — total salary before any cut");
-        L.push("- NPS " + fmt(r.nps) + " — pension saving, 10% cut from your salary");
-        L.push("- Tax + professional tax " + fmt(s.tax) + " — tax paid to government");
-        s.extrasD.forEach(function(e){ L.push("- " + (e.name || "Other deduction") + " " + fmt(e.amount || 0)); });
-        L.push("= In-hand " + fmt(r.inhand) + " — money that actually comes to your bank account");
-        var text = L.join("\n");
-        function done(){
-          var m = $("copiedMsg"); m.style.display = "inline";
-          setTimeout(function(){ m.style.display = "none"; }, 2600);
-        }
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
-        } else { fallback(); }
-        function fallback(){
-          var ta = document.createElement("textarea");
-          ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
-          document.body.appendChild(ta); ta.select();
-          try { document.execCommand("copy"); } catch(e){}
-          document.body.removeChild(ta); done();
-        }
-      });
-
-      // ---------------- Init ----------------
-      selectPreset("clerk");
-    </script>
-  </body>
+  renderJobs();
+  renderSlip();
+</script>
+</body>
 </html>

@@ -144,6 +144,10 @@
       <div class="term"><b>Assam Police <span>— SI, Constable &amp; Home Guard</span></b><p>Police pay follows the same Assam pay bands. A Sub-Inspector starts at ₹14,000 + ₹8,700 Grade Pay = ₹22,700 basic; a Constable at ₹14,000 + ₹5,600 = ₹19,600 basic, both with Assam DA (55%). A Home Guard is different — it is a volunteer post paid a duty allowance for days served, not a monthly salary, so there is no DA, HRA or NPS on it.</p></div>
       <div class="term"><b>TET <span>— teachers</span></b><p>Teacher Eligibility Test — the exam you must pass to become a government school teacher. Assam LP (primary) teachers start at ₹14,000 + ₹6,200 Grade Pay = ₹20,200 basic; Graduate Teachers at ₹14,000 + ₹8,700 = ₹22,700; PG Teachers at ₹22,000 + ₹11,800 = ₹33,800.</p></div>
       <div class="term"><b>UGC Academic Level <span>— professors</span></b><p>College and university teachers are paid on UGC scales, not the normal pay levels. An Assistant Professor starts at Academic Level 10 — ₹57,700 basic. A full Professor is Academic Level 14 — ₹1,44,200 basic.</p></div>
+      <div class="term"><b>RBI Grade B &amp; NABARD <span>— bank officers</span></b><p>RBI Grade B is the Reserve Bank's officer entry — higher than RBI Assistant. NABARD is the agriculture and rural development bank: Grade A is Assistant Manager, Grade B is Manager, and Development Assistant is its Group B clerical post. IBPS Specialist Officer (SO) is for IT, HR, Marketing, Law and other specialist fields in public sector banks.</p></div>
+      <div class="term"><b>Insurance <span>— LIC, NIACL &amp; UIIC</span></b><p>LIC is life insurance: AAO is its officer post, ADO develops agents, and Assistant is clerical. NIACL and UIIC are general insurance companies: AO (Scale-I) is the officer post and Assistant is the clerical post. Pay follows insurance company scales, close to bank scales.</p></div>
+      <div class="term"><b>Railway Group C, Group D &amp; RPF</b><p>Group D is Level 1 — Track Maintainer, Assistant and similar posts, 10th pass. Group C covers Level 2 to Level 6 technical and NTPC posts — clerks, guards, station staff. RPF is the Railway Protection Force: Constable (Level 3) and Sub-Inspector (Level 6), both with physical tests.</p></div>
+      <div class="term"><b>India Post &amp; TRCA <span>— GDS only</span></b><p>Postman, MTS, Postal Assistant and Inspector Posts are regular Department of Posts jobs on Central pay levels. GDS (Gramin Dak Sevak — BPM, ABPM, Dak Sevak) is different: it is paid TRCA, a Time-Related Continuity Allowance based on duty hours, not a regular pay scale — so there is no separate DA, HRA or NPS on a GDS slip, and selection is by 10th-mark merit, with no exam.</p></div>
       <div class="term"><b><span>Gross</span></b><p>Basic Pay + DA + HRA + all allowances added together. This is <b>before</b> any cut.</p></div>
       <div class="term"><b><span>NPS</span> — Pension cut</b><p>10% is cut from your salary and saved for your pension. Your office adds 14% more from its side.</p></div>
       <div class="term"><b><span>Tax</span></b><p>Money paid to the government from your salary, plus a small professional tax.</p></div>
@@ -152,21 +156,23 @@
 
     <div class="formula-box">Basic Pay + DA + HRA + Allowances<br>= Gross<br>Gross − NPS − Tax = In-hand</div>
 
-    <p class="note">Are the heads the same for every job? No. Basic Pay + DA + HRA + TA are common everywhere. The extra heads are different — bank has Special Allowance, RBI has Grade Allowance + LCA, railway has Running Allowance, Assam state jobs have Grade Pay and Medical Allowance, and professors are paid on UGC Academic Levels instead of normal pay levels.</p>
+    <p class="note">Are the heads the same for every job? No. Basic Pay + DA + HRA + TA are common everywhere. The extra heads are different — bank has Special Allowance, RBI has Grade Allowance + LCA, railway has Running Allowance, Assam state jobs have Grade Pay and Medical Allowance, professors are paid on UGC Academic Levels instead of normal pay levels, and India Post GDS is paid TRCA instead of a pay scale.</p>
   </section>
 </main>
 
 <script>
   var CATS = [
-    { id:"bank", name:"Bank", sub:"SBI, IBPS, RBI, RRB" },
-    { id:"railway", name:"Railway", sub:"Loco Pilot, TTE, Guard…" },
+    { id:"bank", name:"Bank", sub:"SBI, IBPS, RBI, NABARD, RRB" },
+    { id:"insurance", name:"Insurance", sub:"LIC, NIACL, UIIC" },
+    { id:"railway", name:"Railway", sub:"Group C, Group D, RPF, ALP…" },
     { id:"ssc", name:"SSC", sub:"CGL, CHSL, GD, MTS" },
     { id:"defence", name:"Defence", sub:"Army — Sepoy to Officer" },
     { id:"upsc", name:"UPSC", sub:"IAS, IPS, IRS" },
     { id:"assam", name:"Assam", sub:"Grade III, IV, APSC, Police" },
-    { id:"education", name:"Education", sub:"TET Teacher, Professor…" }
+    { id:"education", name:"Education", sub:"TET Teacher, Professor…" },
+    { id:"post", name:"India Post", sub:"GDS, Postman, Postal Asst…" }
   ];
-  var CAT_LABEL = { bank:"2 — Tap a bank job", railway:"2 — Tap a railway job", ssc:"2 — Tap an SSC job", defence:"2 — Tap a defence job", upsc:"2 — Tap a UPSC service", assam:"2 — Tap an Assam job", education:"2 — Tap a teaching job" };
+  var CAT_LABEL = { bank:"2 — Tap a bank job", insurance:"2 — Tap an insurance job", railway:"2 — Tap a railway job", ssc:"2 — Tap an SSC job", defence:"2 — Tap a defence job", upsc:"2 — Tap a UPSC service", assam:"2 — Tap an Assam job", education:"2 — Tap a teaching job", post:"2 — Tap an India Post job" };
   var JOBS = [
     { id:"sbipo", cat:"bank", name:"SBI PO", sub:"State Bank officer", basic:55220, da:21884, tax:11500,
       lines:[
@@ -213,6 +219,75 @@
         {n:"HRA", d:"House Rent Allowance — money for house rent", a:4969},
         {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:12847}
       ]},
+    { id:"rbigb", cat:"bank", name:"RBI Grade B Officer", sub:"Reserve Bank of India — Grade B (DR)", basic:78450, da:29811, tax:24000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — if no RBI housing", a:11768},
+        {n:"Grade Allowance", d:"RBI's own extra allowance", a:12000},
+        {n:"LCA", d:"Local Compensatory Allowance — extra for costly cities", a:5500},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1800},
+        {n:"Other Allowances", d:"Special and other RBI allowances — approx", a:8000}
+      ]},
+    { id:"nabarda", cat:"bank", name:"NABARD Grade A", sub:"Assistant Manager (RDBS)", basic:44500, da:17800, tax:8500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:6675},
+        {n:"Special Allowance", d:"NABARD special allowance — approx", a:6900},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1200},
+        {n:"Other Allowances", d:"Other NABARD allowances — approx", a:3500}
+      ]},
+    { id:"nabardb", cat:"bank", name:"NABARD Grade B", sub:"Manager (RDBS)", basic:56900, da:22760, tax:13000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:8535},
+        {n:"Special Allowance", d:"NABARD special allowance — approx", a:8800},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1200},
+        {n:"Other Allowances", d:"Other NABARD allowances — approx", a:4000}
+      ]},
+    { id:"ibpsso", cat:"bank", name:"IBPS Specialist Officer", sub:"SO Scale-I — IT, HR, Marketing, Law…", basic:48480, da:19214, tax:6000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:4969},
+        {n:"Special Allowance", d:"Extra 26.5% of basic — bank settlement", a:12847}
+      ]},
+    { id:"nabarddev", cat:"bank", name:"NABARD Development Assistant", sub:"Group B — Development Assistant", basic:23110, da:9810, tax:650,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:2311},
+        {n:"Special Allowance", d:"NABARD special allowance — approx", a:5050},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:850}
+      ]},
+    { id:"licaao", cat:"insurance", name:"LIC AAO", sub:"Assistant Administrative Officer", basic:88635, da:35454, tax:26000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:10636},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:2000},
+        {n:"Other Allowances", d:"City and other LIC allowances — approx", a:6500}
+      ]},
+    { id:"licado", cat:"insurance", name:"LIC ADO", sub:"Apprentice Development Officer", basic:56025, da:22410, tax:11000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:5603},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1300},
+        {n:"Other Allowances", d:"Other LIC allowances — approx", a:4500}
+      ]},
+    { id:"licassistant", cat:"insurance", name:"LIC Assistant", sub:"Clerical staff — LIC", basic:38710, da:15484, tax:3200,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:3871},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1100},
+        {n:"Other Allowances", d:"Other LIC allowances — approx", a:2800}
+      ]},
+    { id:"niaclao", cat:"insurance", name:"NIACL AO", sub:"Administrative Officer Scale-I", basic:50925, da:22916, tax:9500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:5093},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1200},
+        {n:"Other Allowances", d:"Other NIACL allowances — approx", a:8200}
+      ]},
+    { id:"niaclassistant", cat:"insurance", name:"NIACL Assistant", sub:"Assistant Class-III — NIACL", basic:26710, da:12020, tax:750,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:2671},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:850},
+        {n:"Other Allowances", d:"Other NIACL allowances — approx", a:5400}
+      ]},
+    { id:"uiicao", cat:"insurance", name:"UIIC AO", sub:"Administrative Officer Scale-I — United India", basic:50925, da:22916, tax:9500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — money for house rent", a:5093},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1200},
+        {n:"Other Allowances", d:"Other UIIC allowances — approx", a:8200}
+      ]},
     { id:"alp", cat:"railway", name:"Railway ALP", sub:"Assistant Loco Pilot", basic:19900, da:11940, tax:900,
       lines:[
         {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3980},
@@ -245,6 +320,50 @@
       lines:[
         {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4340},
         {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"groupc", cat:"railway", name:"Railway Group C", sub:"NTPC Graduate post — Level 5", basic:29200, da:17520, tax:1800,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:5840},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"groupd", cat:"railway", name:"Railway Group D", sub:"Level 1 — Track Maintainer, Assistant…", basic:18000, da:10800, tax:200,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3600},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:1440}
+      ]},
+    { id:"rpfconst", cat:"railway", name:"RPF Constable", sub:"Railway Protection Force, Level 3", basic:21700, da:13020, tax:400,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4340},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880},
+        {n:"Other Allowances", d:"Kit, ration and other RPF allowances — approx", a:1200}
+      ]},
+    { id:"rpfsi", cat:"railway", name:"RPF SI", sub:"Sub-Inspector, Railway Protection Force, Level 6", basic:35400, da:21240, tax:3000,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:7080},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880},
+        {n:"Other Allowances", d:"Kit, ration and other RPF allowances — approx", a:1500}
+      ]},
+    { id:"gds", cat:"post", name:"India Post GDS — BPM", sub:"Gramin Dak Sevak, Branch Postmaster — TRCA", basic:15960, da:0, tax:0,
+      lines:[]},
+    { id:"postman", cat:"post", name:"Postman", sub:"India Post — Level 3", basic:21700, da:13020, tax:400,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4340},
+        {n:"Transport Allowance", d:"Money for coming to duty", a:2880}
+      ]},
+    { id:"postmts", cat:"post", name:"India Post MTS", sub:"Multi Tasking Staff — Level 1", basic:18000, da:10800, tax:200,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3600},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:1440}
+      ]},
+    { id:"postalassist", cat:"post", name:"Postal Assistant", sub:"Postal / Sorting Assistant — Level 4", basic:25500, da:15300, tax:900,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:5100},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:2880}
+      ]},
+    { id:"inspectorposts", cat:"post", name:"Inspector Posts (IP)", sub:"India Post — Level 7, via SSC CGL / LDCE", basic:44900, da:26940, tax:5500,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:8980},
+        {n:"Transport Allowance", d:"Money for coming to office daily", a:2880}
       ]},
     { id:"cgl7", cat:"ssc", name:"SSC CGL — Inspector / ASO", sub:"Level 7 post, CGL", basic:44900, da:26940, tax:5500,
       lines:[
@@ -446,7 +565,27 @@
     tetgrad:{ q:"Graduate in any discipline with at least 50% marks plus B.Ed, and Assam High School (Graduate Teacher) TET qualified. Subject and medium conditions apply post-wise - check the notice. Age 18-40 years (relaxation as per Assam rules).", a:"Two stages: 1) Qualify the Assam Graduate Teacher TET - apply online through the portal named in the TET notification (ssa.assam.gov.in / SEBA). 2) Apply for recruitment through the Directorate of Secondary Education portal (madhyamik.assam.gov.in) when vacancies are advertised, then document verification." },
     pgt:{ q:"Post Graduate (Master's) degree in the relevant subject with at least 50% marks plus B.Ed, and Assam Higher Secondary (PGT) TET qualified. Age 21-38 years (relaxation as per Assam rules) - check the notice.", a:"Two stages: 1) Qualify the Assam HS TET for Post Graduate Teachers - apply online through the portal named in the TET notification. 2) Apply for PGT recruitment through the Directorate of Secondary Education portal (madhyamik.assam.gov.in) when vacancies are advertised, then document verification." },
     asstprof:{ q:"Master's degree (Post Graduate) in the relevant subject with at least 55% marks, plus NET qualified - or a PhD as per UGC Regulations, which exempts NET. This is the UGC Academic Level 10 entry post.", a:"There is no single central exam. Apply to the college or university that advertises the post: 1) Watch advertisements on the institution website and the Assam college recruitment portals. 2) Send / submit the application in the prescribed format with NET / PhD and academic documents. Selection: Shortlisting by academic score > Interview by the selection committee." },
-    professor:{ q:"Post Graduate with at least 55% marks plus a PhD in the relevant subject, at least 10 years of teaching / research experience as Assistant / Associate Professor, and a minimum number of research publications - all as per UGC Regulations (Academic Level 14).", a:"There is no exam for Professor. Apply directly to the university that advertises the post: 1) Watch vacancy notices on the university website and employment news. 2) Submit the application in the prescribed format with PhD, experience and publication records. Selection: Shortlisting > Presentation / Interview by the selection committee." }
+    professor:{ q:"Post Graduate with at least 55% marks plus a PhD in the relevant subject, at least 10 years of teaching / research experience as Assistant / Associate Professor, and a minimum number of research publications - all as per UGC Regulations (Academic Level 14).", a:"There is no exam for Professor. Apply directly to the university that advertises the post: 1) Watch vacancy notices on the university website and employment news. 2) Submit the application in the prescribed format with PhD, experience and publication records. Selection: Shortlisting > Presentation / Interview by the selection committee." },
+    rbigb:{ q:"Graduate in any discipline with at least 60% marks (55% for SC / ST / PwBD), or a Post Graduate / professional qualification as given in the notice. Age 21-30 years (relaxation as per rules).", a:"Apply online only at rbi.org.in > Opportunities@RBI when the RBI Grade B (DR) notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Phase-I (online exam) > Phase-II (papers) > Interview." },
+    nabarda:{ q:"Graduate in any discipline with at least 60% marks (55% for SC / ST / PwBD) for General stream; specialist streams need the subject degree given in the notice. Age 21-30 years (relaxation as per rules).", a:"Apply online only at nabard.org > Career Notices when the NABARD Grade A (RDBS) notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Prelims > Mains > Interview." },
+    nabardb:{ q:"Post Graduate in any discipline with at least 55% marks (50% for SC / ST / PwBD), or Graduate with professional qualifications as given in the notice. Age 25-32 years (relaxation as per rules).", a:"Apply online only at nabard.org > Career Notices when the NABARD Grade B (RDBS) notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Prelims > Mains > Interview." },
+    ibpsso:{ q:"Graduate / Post Graduate or professional degree in the specialist field - for example B.Tech for IT Officer, MBA / PGDM for HR / Marketing, Law degree for Law Officer. Age 20-30 years (relaxation as per rules). Check the post-wise qualification in the notice.", a:"Apply online only at ibps.in for CRP Specialist Officers when the notification is out. Steps: 1) Register and fill the form for your specialist post. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Prelims > Mains (professional knowledge) > Interview." },
+    nabarddev:{ q:"Graduate in any discipline with at least 50% marks (pass class for SC / ST / PwBD as per the notice). Age 18-30 years (relaxation as per rules).", a:"Apply online only at nabard.org > Career Notices when the Development Assistant notification is out. Steps: 1) Register and fill the form. 2) Upload photo and signature. 3) Pay the fee online. Selection: Prelims > Mains > Language Proficiency Test." },
+    licaao:{ q:"Graduate in any discipline from a recognised university for Generalist posts; Specialist posts need the subject / professional qualification given in the notice. Age 21-30 years (relaxation as per rules).", a:"Apply online only at licindia.in > Careers when the LIC AAO notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Prelims > Mains > Interview, then medical." },
+    licado:{ q:"Graduate in any discipline from a recognised university. Age 21-30 years (relaxation as per rules). Preference conditions for rural / urban and LIC employee / agent categories are given in the notice.", a:"Apply online only at licindia.in > Careers when the LIC ADO notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Prelims > Mains > Interview, then medical." },
+    licassistant:{ q:"Graduate in any discipline from a recognised university. Age 18-30 years (relaxation as per rules).", a:"Apply online only at licindia.in > Careers when the LIC Assistant notification is out. Steps: 1) Register and fill the form. 2) Upload photo and signature. 3) Pay the fee online. Selection: Prelims > Mains. No interview." },
+    niaclao:{ q:"Graduate / Post Graduate in any discipline with at least 60% marks (55% for SC / ST / PwBD) for Generalist posts; Specialist posts need the subject qualification given in the notice. Age 21-30 years (relaxation as per rules).", a:"Apply online only at newindia.co.in > Recruitment when the NIACL AO notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Prelims > Mains > Interview." },
+    niaclassistant:{ q:"Graduate in any discipline from a recognised university, with knowledge of the regional language of the state applied for. Age 21-30 years (relaxation as per rules).", a:"Apply online only at newindia.co.in > Recruitment when the NIACL Assistant notification is out. Steps: 1) Register and fill the form. 2) Upload photo and signature. 3) Pay the fee online. Selection: Prelims > Mains > Regional Language Test." },
+    uiicao:{ q:"Graduate in any discipline with at least 60% marks (55% for reserved categories as per the notice) for Generalist posts; Specialist posts need the subject qualification given in the notice. Age 21-30 years (relaxation as per rules).", a:"Apply online only at uiic.co.in > Recruitment when the UIIC AO notification is out. Steps: 1) Register and fill the form. 2) Upload photo, signature and documents. 3) Pay the fee online. Selection: Online Exam > Interview." },
+    groupc:{ q:"Group C is not one exam - it covers NTPC and other Level 2 to Level 6 posts. Graduate posts need a Bachelor's degree; Under-Graduate posts need 12th pass. Age and qualification are post-wise in the RRB CEN notification (relaxation as per rules). This slip shows a Level 5 NTPC Graduate post.", a:"Apply online only at rrbapply.gov.in when the RRB NTPC / Group C CEN notification is out. Steps: 1) Create an account and fill the form, choosing your Group C post. 2) Upload photo, signature and certificates. 3) Pay the fee online. Selection: CBT 1 > CBT 2 > Typing / Aptitude Test (as applicable) > Document Verification and Medical." },
+    groupd:{ q:"10th pass (Matriculation) from a recognised board, or ITI / Act Apprenticeship as given in the notice. Age 18-33 years in recent CENs (check the current notification; relaxation as per rules). Physical and medical standards apply.", a:"Apply online only at rrbapply.gov.in when the RRB Group D (Level 1) CEN notification is out. Steps: 1) Create an account and fill the form. 2) Upload photo, signature and certificates. 3) Pay the fee online. Selection: CBT > PET (physical test) > Document Verification and Medical." },
+    rpfconst:{ q:"10th pass (Matriculation) from a recognised board. Age 18-25 years in recent notices (relaxation as per rules). Physical standards (height, chest) and physical tests apply.", a:"Apply online only at rrbapply.gov.in when the RPF Constable notification is out. Steps: 1) Create an account and fill the RPF form. 2) Upload photo, signature and certificates. 3) Pay the fee online. Selection: CBT > PET / PMT (physical tests) > Document Verification and Medical." },
+    rpfsi:{ q:"Graduate in any discipline from a recognised university. Age 20-25 years in recent notices (relaxation as per rules). Physical standards (height, chest) and physical tests apply.", a:"Apply online only at rrbapply.gov.in when the RPF Sub-Inspector notification is out. Steps: 1) Create an account and fill the RPF SI form. 2) Upload photo, signature and certificates. 3) Pay the fee online. Selection: CBT > PET / PMT (physical tests) > Document Verification and Medical." },
+    gds:{ q:"10th pass (Matriculation) with Maths and English from a recognised board, with the local language studied up to 10th. Age 18-40 years (relaxation as per rules). Basic computer knowledge certificate is needed. GDS is paid TRCA (Time-Related Continuity Allowance), not a regular pay scale - there is no DA head, HRA or NPS like a regular post, so this slip shows the TRCA amount only and the figure changes with the TRCA level and duty hours.", a:"Apply online only at indiapostgdsonline.gov.in when the GDS schedule is out. Steps: 1) Register and pay the fee online. 2) Fill the form and give division / post preferences (BPM, ABPM, Dak Sevak). 3) Upload certificates. Selection: No exam - a system-generated merit list is made from 10th marks, then document verification." },
+    postman:{ q:"12th pass from a recognised board, with the local language studied up to 10th. Driving licence / ability to ride a bicycle conditions can apply as given in the notice. Age 18-27 years (relaxation as per rules).", a:"Postman recruitment is circle-wise. Apply online through the India Post portal named in the circle notification (indiapost.gov.in > Recruitment). Steps: 1) Register and fill the Postman form for your circle. 2) Upload photo, signature and certificates. 3) Pay the fee online if the notice asks for it. Selection: Merit / exam as stated in the circle notice > Document Verification." },
+    postmts:{ q:"10th pass (Matriculation) from a recognised board. Age 18-25 years (relaxation as per rules).", a:"India Post MTS recruitment is circle-wise, and a large share is filled by promotion / GDS selection as well as direct recruitment where notified. Apply online through the portal named in the circle notification (indiapost.gov.in > Recruitment). Steps: 1) Register and fill the MTS form. 2) Upload photo, signature and certificates. Selection: As stated in the circle notice > Document Verification." },
+    postalassist:{ q:"Graduate in any discipline from a recognised university, with basic computer knowledge certificate (at least 60 days) as given in the notice. Age 18-27 years (relaxation as per rules).", a:"Apply online only at ssc.gov.in - Postal Assistant / Sorting Assistant is filled through SSC CHSL in recent cycles. Steps: 1) Complete One-Time Registration (OTR). 2) Fill the CHSL form and choose Postal / Sorting Assistant. 3) Pay the fee online (exemptions as per rules). Selection: Tier-I (CBT) > Tier-II (CBT, with skill test as applicable). Direct circle notifications, if issued, are at indiapost.gov.in." },
+    inspectorposts:{ q:"Graduate in any discipline. Inspector Posts is a Level 7 post filled through SSC CGL, and also by promotion (LDCE) for serving Postal Assistants. Age as per the CGL notice for direct entry (relaxation as per rules).", a:"Direct entry: Apply online only at ssc.gov.in when the SSC CGL notification is out and choose Inspector Posts (Department of Posts). Steps: 1) Complete One-Time Registration (OTR). 2) Fill the CGL form and upload photo and signature. 3) Pay the fee online. Selection: Tier-I (CBT) > Tier-II (CBT) > Document Verification and Medical. Serving staff can also appear in the departmental LDCE notified by India Post." }
   };
 
   var slipData = null;
@@ -458,7 +597,7 @@
     j.lines.forEach(function(l){ gross += l.a; });
     var nps = Math.round((j.basic + (j.id==="rbi" ? j.da : Math.round(j.basic * (j.id==="alp"||j.id==="guard" ? 0.60 : 0.3133)))) * 0.10);
     // Use the known NPS figures so totals match the standard breakups
-    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976, assam3:3131, assam4:2465, apsc:6712, assampolsi:3519, assampolconst:3038, assamhomeguard:0, tetlp:3131, tetgrad:3519, pgt:5239, asstprof:9232, professor:23072 };
+    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976, assam3:3131, assam4:2465, apsc:6712, assampolsi:3519, assampolconst:3038, assamhomeguard:0, tetlp:3131, tetgrad:3519, pgt:5239, asstprof:9232, professor:23072, rbigb:10826, nabarda:6230, nabardb:7966, ibpsso:6367, nabarddev:3292, licaao:12409, licado:7844, licassistant:5419, niaclao:7384, niaclassistant:3873, uiicao:7384, groupc:4672, groupd:2880, rpfconst:3472, rpfsi:5664, gds:0, postman:3472, postmts:2880, postalassist:4080, inspectorposts:7184 };
     nps = NPS[j.id];
     var inhand = gross - nps - j.tax;
     var h = "";
@@ -581,7 +720,7 @@
       // ===== Rates on Basic Pay (percentages) =====
       var rateLine = "Rates on Basic Pay:   DA = " + pctOf(d.da, d.basic) + " of Basic";
       if (d.hra) rateLine += "    |    HRA = " + pctOf(d.hra, d.basic) + " of Basic";
-      rateLine += d.nps > 0 ? "    |    NPS cut = 10% of (Basic + DA)" : "    |    No NPS cut - volunteer post";
+      rateLine += d.nps > 0 ? "    |    NPS cut = 10% of (Basic + DA)" : "    |    No NPS cut on this post";
       text(40, y, rateLine, 9.5, true, C_GREEN);
       y -= 12;
 

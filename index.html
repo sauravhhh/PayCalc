@@ -455,13 +455,26 @@
     var items = [{ n:"Basic Pay", a:j.basic }, { n:"+ DA", a:j.da }];
     j.lines.forEach(function(l){ items.push({ n:"+ " + l.n, a:l.a }); });
     var info = JOB_INFO[j.id] || { q:"See the official notification for this post.", a:"Apply online only on the official website given in the notification." };
-    slipData = { name:j.name, sub:j.sub + " - per month", items:items, gross:gross, nps:nps, tax:j.tax, inhand:inhand, qual:info.q, apply:info.a };
+    var hraAmt = null;
+    j.lines.forEach(function(l){ if (l.n.indexOf("HRA") === 0) hraAmt = l.a; });
+    slipData = { name:j.name, sub:j.sub + " - per month", items:items, gross:gross, nps:nps, tax:j.tax, inhand:inhand, qual:info.q, apply:info.a, basic:j.basic, da:j.da, cat:j.cat, hra:hraAmt };
   }
+
+  // Reservation + age relaxation — PDF only. Central pattern for Bank / Railway / SSC / Defence / UPSC;
+  // Assam pattern for Assam state + Assam teaching posts. Percentages are the standard vertical quotas.
+  var RESERVATION = {
+    central:{ label:"Central Government pattern", cats:[["Unreserved (UR)",40.5],["OBC - NCL",27],["SC",15],["EWS",10],["ST",7.5]], note:"PwBD: 4% horizontal reservation across categories. Ex-Servicemen quota as per the notice for the post. Category shares of vacancies are announced post-wise in the official notification." },
+    assam:{ label:"Assam Government pattern", cats:[["Unreserved (UR)",41],["OBC / MOBC",27],["ST (Plains)",10],["EWS",10],["SC",7],["ST (Hills)",5]], note:"PwBD: 4% horizontal reservation across categories. Women and other horizontal quotas apply as notified for the post. Category shares are announced post-wise in the official notification." }
+  };
+  var AGE_RELAX = [["OBC / OBC-NCL","+3 years"],["SC / ST","+5 years"],["PwBD","+10 years"],["Ex-Servicemen","As per rules"]];
+  function reservFor(cat){ return (cat === "assam" || cat === "education") ? RESERVATION.assam : RESERVATION.central; }
 
   // Download the current payslip as a PDF file (built in the browser)
   // Colours match the page: --green #0d6e4f, --ink #17201b, --ink2 #4c5a52, --red #b3372c
   var C_GREEN = "0.051 0.431 0.310", C_INK = "0.090 0.125 0.106", C_INK2 = "0.298 0.353 0.322",
-      C_RED = "0.702 0.216 0.173", C_WHITE = "1 1 1", C_LINE = "0.867 0.882 0.855";
+      C_RED = "0.702 0.216 0.173", C_WHITE = "1 1 1", C_LINE = "0.867 0.882 0.855",
+      C_PALE = "0.890 0.949 0.918", C_FAINT = "0.965 0.969 0.961", C_MID = "0.243 0.761 0.545",
+      C_BARBG = "0.910 0.918 0.902", C_TAXBAR = "0.839 0.373 0.310", C_NPSBAR = "0.365 0.435 0.388";
   function pdfText(s){
     return s.replace(/[—–]/g, "-").replace(/−/g, "-").replace(/[^\x20-\x7E]/g, "").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
   }
@@ -500,44 +513,14 @@
       function text(x, y, s, size, bold, col){
         ops.push((col || C_INK) + " rg BT /" + (bold ? "F2" : "F1") + " " + size + " Tf " + x + " " + y + " Td (" + pdfText(s) + ") Tj ET");
       }
+      function rtext(xr, y, s, size, bold, col){ text(xr - s.length * size * 0.55, y, s, size, bold, col); }
       function amt(x, y, n, size, bold, col){
         var s = "Rs " + Math.round(n).toLocaleString("en-IN");
-        text(x - s.length * size * 0.55, y, s, size, bold, col);
+        rtext(x, y, s, size, bold, col);
       }
+      function pctOf(n, base){ return base > 0 ? (Math.round(n / base * 1000) / 10).toFixed(1) + "%" : "0.0%"; }
       function rect(x, y, w, h, col){ ops.push(col + " rg " + x + " " + y + " " + w + " " + h + " re f"); }
       function rule(y){ rect(40, y, 515, 0.7, C_LINE); }
-
-      // Header — the page logo beside the title, in the page's colours
-      if (logo) {
-        ops.push("q 48 0 0 48 40 786 cm /Im1 Do Q");
-      } else {
-        rect(40, 786, 48, 48, C_GREEN);
-        text(50, 802, "Rs", 17, true, C_WHITE);
-      }
-      text(100, 814, "PayCalc - Salary Breakup", 18, true, C_INK);
-      text(100, 795, "Salary, simply.", 11, true, C_GREEN);
-      rect(40, 776, 515, 2.5, C_GREEN);
-
-      var y = 748;
-      text(40, y, d.name, 14, true, C_INK); y -= 18;
-      text(40, y, d.sub, 11, false, C_INK2); y -= 12;
-      rule(y); y -= 26;
-      d.items.forEach(function(it){ text(40, y, it.n, 11.5, false, C_INK); amt(555, y, it.a, 11.5, false, C_INK); y -= 20; });
-      y -= 2; rule(y); y -= 24;
-      text(40, y, "Gross - total salary before any cut", 12, true, C_INK); amt(555, y, d.gross, 12, true, C_INK); y -= 22;
-      text(40, y, "- NPS - pension saving", 11.5, false, C_INK); amt(555, y, d.nps, 11.5, false, C_RED); y -= 20;
-      text(40, y, "- Tax - income tax + professional tax", 11.5, false, C_INK); amt(555, y, d.tax, 11.5, false, C_RED); y -= 16;
-
-      // In-hand — same solid green band as on the page, white text
-      var boxY = y - 14;
-      rect(40, boxY, 515, 40, C_GREEN);
-      text(56, boxY + 15, "In-hand - money in your bank account", 13, true, C_WHITE);
-      amt(539, boxY + 13, d.inhand, 15, true, C_WHITE);
-      y = boxY - 24;
-      text(40, y, "Starting pay for a new joiner, per month. Tax is approximate.", 9.5, false, C_INK2); y -= 15;
-      text(40, y, "https://sauravhhh.github.io/PayCalc/", 9.5, true, C_GREEN);
-
-      // Qualification + How to apply — PDF only, below the salary breakup
       function wrap(s, max){
         var words = s.split(" "), lines = [], cur = "";
         words.forEach(function(w){
@@ -547,15 +530,138 @@
         if (cur.trim()) lines.push(cur.trim());
         return lines;
       }
+      function sectionTitle(title){
+        rect(40, y - 2, 4, 13, C_GREEN);
+        text(52, y, title, 12, true, C_INK);
+        y -= 16;
+      }
+
+      // ===== Header =====
+      rect(0, 838, 595, 4, C_GREEN);
+      if (logo) {
+        ops.push("q 46 0 0 46 40 784 cm /Im1 Do Q");
+      } else {
+        rect(40, 784, 46, 46, C_GREEN);
+        text(49, 800, "Rs", 16, true, C_WHITE);
+      }
+      text(98, 812, "PayCalc - Salary Breakup", 18, true, C_INK);
+      text(98, 794, "Salary, simply.", 11, true, C_GREEN);
+      rect(448, 796, 107, 24, C_PALE);
+      rtext(547, 804, "STARTING PAY", 8.5, true, C_GREEN);
+      rect(40, 774, 515, 2.2, C_GREEN);
+
+      // ===== Job title band =====
+      var y = 758;
+      rect(40, y - 36, 515, 40, C_PALE);
+      rect(40, y - 36, 5, 40, C_GREEN);
+      text(58, y - 15, d.name, 15, true, C_INK);
+      text(58, y - 29, d.sub, 10, false, C_INK2);
+      rtext(542, y - 15, pctOf(d.inhand, d.gross) + " in-hand", 10.5, true, C_GREEN);
+      rtext(542, y - 29, "of Gross reaches you", 8.5, false, C_INK2);
+      y -= 50;
+
+      // ===== Rates on Basic Pay (percentages) =====
+      var rateLine = "Rates on Basic Pay:   DA = " + pctOf(d.da, d.basic) + " of Basic";
+      if (d.hra) rateLine += "    |    HRA = " + pctOf(d.hra, d.basic) + " of Basic";
+      rateLine += "    |    NPS cut = 10% of (Basic + DA)";
+      text(40, y, rateLine, 9.5, true, C_GREEN);
+      y -= 12;
+
+      // ===== Salary table with % of Gross =====
+      var headY = y - 20;
+      rect(40, headY, 515, 21, C_GREEN);
+      text(48, headY + 7, "COMPONENT", 8.5, true, C_WHITE);
+      rtext(438, headY + 7, "AMOUNT", 8.5, true, C_WHITE);
+      rtext(547, headY + 7, "% OF GROSS", 8.5, true, C_WHITE);
+      y = headY;
+      d.items.forEach(function(it, idx){
+        var rowY = y - 18;
+        if (idx % 2 === 0) rect(40, rowY, 515, 18, C_FAINT);
+        text(48, rowY + 5.5, it.n, 10.5, false, C_INK);
+        amt(438, rowY + 5.5, it.a, 10.5, false, C_INK);
+        rtext(547, rowY + 5.5, pctOf(it.a, d.gross), 10.5, false, C_INK2);
+        y = rowY;
+      });
+      // Gross
+      rect(40, y - 20, 515, 20, C_PALE);
+      text(48, y - 14, "Gross - total before any cut", 11, true, C_INK);
+      amt(438, y - 14, d.gross, 11, true, C_INK);
+      rtext(547, y - 14, "100.0%", 11, true, C_GREEN);
+      y -= 20;
+      // Deductions
+      [["- NPS - pension saving", d.nps], ["- Tax - income tax + professional tax", d.tax]].forEach(function(dd){
+        var rowY = y - 17;
+        text(48, rowY + 5, dd[0], 10.5, false, C_INK);
+        amt(438, rowY + 5, dd[1], 10.5, false, C_RED);
+        rtext(547, rowY + 5, pctOf(dd[1], d.gross), 10.5, false, C_RED);
+        y = rowY;
+      });
+      y -= 6;
+
+      // ===== In-hand band =====
+      var boxY = y - 36;
+      rect(40, boxY, 515, 36, C_GREEN);
+      text(54, boxY + 14, "In-hand - money in your bank account", 12.5, true, C_WHITE);
+      text(54, boxY + 4.5, pctOf(d.inhand, d.gross) + " of Gross  |  Deductions take " + pctOf(d.nps + d.tax, d.gross), 8.5, false, C_WHITE);
+      amt(541, boxY + 12, d.inhand, 15, true, C_WHITE);
+      y = boxY - 14;
+
+      // ===== Where your Gross goes - stacked percentage bar =====
+      text(40, y, "WHERE YOUR GROSS GOES", 8.5, true, C_INK2);
+      var barY = y - 24, bx = 40;
+      var wIn = 515 * d.inhand / d.gross, wNps = 515 * d.nps / d.gross, wTax = 515 - wIn - wNps;
+      rect(bx, barY, wIn, 11, C_GREEN); bx += wIn;
+      if (wNps > 1) { rect(bx, barY, wNps, 11, C_NPSBAR); bx += wNps; }
+      if (wTax > 1) rect(bx, barY, wTax, 11, C_TAXBAR);
+      y = barY - 13;
+      rect(40, y - 1, 7, 7, C_GREEN); text(51, y, "In-hand " + pctOf(d.inhand, d.gross), 8.5, false, C_INK);
+      rect(170, y - 1, 7, 7, C_NPSBAR); text(181, y, "NPS " + pctOf(d.nps, d.gross), 8.5, false, C_INK);
+      rect(290, y - 1, 7, 7, C_TAXBAR); text(301, y, "Tax " + pctOf(d.tax, d.gross), 8.5, false, C_INK);
+      y -= 20;
+
+      // ===== Qualification + How to Apply =====
       function para(title, body){
-        y -= 22; rule(y); y -= 22;
-        text(40, y, title, 12.5, true, C_GREEN); y -= 17;
-        wrap(body, 92).forEach(function(ln){ text(40, y, ln, 10.5, false, C_INK); y -= 14.5; });
+        sectionTitle(title);
+        wrap(body, 96).forEach(function(ln){ text(40, y, ln, 9.5, false, C_INK); y -= 12; });
+        y -= 8;
       }
       if (d.qual) para("Qualification", d.qual);
       if (d.apply) para("How to Apply", d.apply);
-      y -= 8;
-      text(40, y, "Check the latest official notification before applying - eligibility, age and dates can change.", 9, false, C_INK2);
+
+      // ===== Reservation + Age Relaxation =====
+      var rv = reservFor(d.cat);
+      sectionTitle("Reservation & Age Relaxation");
+      text(40, y, rv.label + " - share of vacancies by category", 9.5, true, C_GREEN);
+      y -= 14;
+      var colTop = y;
+      // Left: category percentages with bars
+      rv.cats.forEach(function(c){
+        text(40, y, c[0], 9, false, C_INK);
+        rect(148, y - 1, 72, 7, C_BARBG);
+        rect(148, y - 1, Math.max(3, 72 * c[1] / 41), 7, C_MID);
+        rtext(262, y, (c[1] % 1 ? c[1].toFixed(1) : c[1]) + "%", 9, true, C_INK);
+        y -= 12.5;
+      });
+      // Right: age relaxation
+      var ry = colTop;
+      AGE_RELAX.forEach(function(a){
+        text(292, ry, a[0], 9, false, C_INK);
+        rtext(555, ry, a[1], 9, true, C_GREEN);
+        ry -= 12.5;
+      });
+      text(292, ry, "Over the upper age limit", 8, false, C_INK2); ry -= 11;
+      text(292, ry, "given in the notice.", 8, false, C_INK2);
+      if (ry - 4 < y) y = ry - 4;
+      y -= 2;
+      wrap(rv.note, 98).forEach(function(ln){ text(40, y, ln, 8.5, false, C_INK2); y -= 11; });
+      y -= 6;
+
+      // ===== Footer =====
+      rule(y); y -= 14;
+      text(40, y, "Starting pay for a new joiner, per month. Tax is approximate. Check the latest official notification before applying - eligibility, age, reservation and dates can change.", 8, false, C_INK2);
+      y -= 13;
+      text(40, y, "https://sauravhhh.github.io/PayCalc/", 9.5, true, C_GREEN);
+      rtext(555, y, "PayCalc", 9.5, true, C_INK2);
 
       var content = ops.join("\n");
       var hasImg = !!logo;

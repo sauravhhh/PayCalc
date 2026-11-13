@@ -141,6 +141,7 @@
       <div class="term"><b>MSP <span>— defence only</span></b><p>Military Service Pay. Extra money only for Army, Navy and Air Force posts, for the hardship of service life. DA is paid on Basic + MSP.</p></div>
       <div class="term"><b>Grade Pay <span>— Assam only</span></b><p>Assam state jobs are shown as a pay band plus Grade Pay. Your Basic Pay is the two added together — Grade III: ₹14,000 + ₹6,200 = ₹20,200. Grade IV: ₹12,000 + ₹3,900 = ₹15,900. APSC (ACS): ₹30,000 + ₹13,300 = ₹43,300.</p></div>
       <div class="term"><b>Medical Allowance <span>— Assam only</span></b><p>A small fixed amount every month for medical expenses, paid to Assam state government staff.</p></div>
+      <div class="term"><b>Assam Police <span>— SI, Constable &amp; Home Guard</span></b><p>Police pay follows the same Assam pay bands. A Sub-Inspector starts at ₹14,000 + ₹8,700 Grade Pay = ₹22,700 basic; a Constable at ₹14,000 + ₹5,600 = ₹19,600 basic, both with Assam DA (55%). A Home Guard is different — it is a volunteer post paid a duty allowance for days served, not a monthly salary, so there is no DA, HRA or NPS on it.</p></div>
       <div class="term"><b>TET <span>— teachers</span></b><p>Teacher Eligibility Test — the exam you must pass to become a government school teacher. Assam LP (primary) teachers start at ₹14,000 + ₹6,200 Grade Pay = ₹20,200 basic; Graduate Teachers at ₹14,000 + ₹8,700 = ₹22,700; PG Teachers at ₹22,000 + ₹11,800 = ₹33,800.</p></div>
       <div class="term"><b>UGC Academic Level <span>— professors</span></b><p>College and university teachers are paid on UGC scales, not the normal pay levels. An Assistant Professor starts at Academic Level 10 — ₹57,700 basic. A full Professor is Academic Level 14 — ₹1,44,200 basic.</p></div>
       <div class="term"><b><span>Gross</span></b><p>Basic Pay + DA + HRA + all allowances added together. This is <b>before</b> any cut.</p></div>
@@ -162,7 +163,7 @@
     { id:"ssc", name:"SSC", sub:"CGL, CHSL, GD, MTS" },
     { id:"defence", name:"Defence", sub:"Army — Sepoy to Officer" },
     { id:"upsc", name:"UPSC", sub:"IAS, IPS, IRS" },
-    { id:"assam", name:"Assam", sub:"3rd Grade, 4th Grade, APSC" },
+    { id:"assam", name:"Assam", sub:"Grade III, IV, APSC, Police" },
     { id:"education", name:"Education", sub:"TET Teacher, Professor…" }
   ];
   var CAT_LABEL = { bank:"2 — Tap a bank job", railway:"2 — Tap a railway job", ssc:"2 — Tap an SSC job", defence:"2 — Tap a defence job", upsc:"2 — Tap a UPSC service", assam:"2 — Tap an Assam job", education:"2 — Tap a teaching job" };
@@ -321,6 +322,20 @@
         {n:"Medical Allowance", d:"Fixed monthly medical allowance — Assam state", a:600},
         {n:"Transport Allowance", d:"Money for coming to office daily", a:2880}
       ]},
+    { id:"assampolsi", cat:"assam", name:"Assam Police SI", sub:"Sub-Inspector (UB / AP) — PB-2, Grade Pay Rs 8,700", basic:22700, da:12485, tax:400,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4540},
+        {n:"Medical Allowance", d:"Fixed monthly medical allowance — Assam state", a:600},
+        {n:"Transport Allowance", d:"Money for coming to duty daily", a:1440}
+      ]},
+    { id:"assampolconst", cat:"assam", name:"Assam Police Constable", sub:"Constable (UB / AP) — PB-2, Grade Pay Rs 5,600", basic:19600, da:10780, tax:300,
+      lines:[
+        {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:3920},
+        {n:"Medical Allowance", d:"Fixed monthly medical allowance — Assam state", a:600},
+        {n:"Transport Allowance", d:"Money for coming to duty daily", a:1440}
+      ]},
+    { id:"assamhomeguard", cat:"assam", name:"Assam Home Guard", sub:"Home Guards volunteer — duty allowance, full month on duty (approx)", basic:19940, da:0, tax:0,
+      lines:[]},
     { id:"tetlp", cat:"education", name:"TET Teacher — Primary", sub:"Assam LP School Teacher (Classes 1–5)", basic:20200, da:11110, tax:300,
       lines:[
         {n:"HRA", d:"House Rent Allowance — Guwahati (20%)", a:4040},
@@ -424,6 +439,9 @@
     assam3:{ q:"Bachelor's Degree (Graduate) in any discipline from a recognised university for most Grade III posts; some posts also need a computer certificate / diploma of at least 6 months. HS (12th) posts also exist under Grade III - check the ADRE notice post-wise. Age 18-40 years (relaxation as per Assam rules).", a:"Apply online only through the ADRE portal linked from assam.gov.in and sebaonline.org when the Assam Direct Recruitment (ADRE) notification is out. Steps: 1) Register and fill the Grade III form. 2) Upload photo, signature and certificates. Selection: Written exam > Skill test (computer / typing, where applicable) > Document Verification." },
     assam4:{ q:"HSLC (10th pass) or equivalent; the maximum qualification for Grade IV is HSSLC (12th pass) - candidates with higher qualifications are not eligible for Grade IV. ITI holders in specific trades for technical posts. Age 18-40 years (relaxation as per Assam rules).", a:"Apply online only through the ADRE portal linked from assam.gov.in and sebaonline.org when the Assam Direct Recruitment (ADRE) notification is out. Steps: 1) Register and fill the Grade IV form. 2) Upload photo, signature and certificates. Selection: Written exam > Document Verification (interview / skill test where the notice says so)." },
     apsc:{ q:"Graduate in any discipline from a recognised university. Age 21-38 years for the Assam Civil Service (relaxation for SC, ST, OBC and other categories as per Assam rules). Candidate must be an Indian citizen and ordinarily resident of Assam.", a:"Apply online only at apscrecruitment.in when the APSC Combined Competitive Examination (CCE) notification is out (notice at apsc.nic.in). Steps: 1) Register and fill the CCE form. 2) Upload photo, signature and certificates. 3) Pay the fee online. Selection: Prelims > Mains > Interview." },
+    assampolsi:{ q:"Graduate in any discipline from a recognised university. Age 20-26 years (relaxation for SC, ST, OBC and other categories as per Assam rules). Physical standards apply - height, chest and eyesight as given in the SLPRB notice, plus PET / PST physical tests.", a:"Apply online only at slprbassam.in (State Level Police Recruitment Board, Assam) when the Sub-Inspector notification is out. Steps: 1) Register and fill the SI form. 2) Upload photo, signature and certificates. Selection: Written Exam > PET / PST (physical tests) > Document Verification and Medical." },
+    assampolconst:{ q:"Constable (UB): Higher Secondary (12th pass) from a recognised board. Constable (AP): HSLC (10th pass). Age 18-25 years (relaxation as per Assam rules). Physical standards apply - height, chest and eyesight as given in the SLPRB notice, plus PET / PST physical tests.", a:"Apply online only at slprbassam.in (State Level Police Recruitment Board, Assam) when the Constable notification is out. Steps: 1) Register and fill the Constable form, choosing UB or AP. 2) Upload photo, signature and certificates. Selection: Written Exam > PET / PST (physical tests) > Document Verification and Medical." },
+    assamhomeguard:{ q:"Home Guard is a volunteer enrolment, not a regular salaried post. Generally HSLC (10th pass) or as stated in the district enrolment notice, age 18 years and above, physically fit, and ordinarily resident of the district. There is no DA, HRA or NPS - only a duty allowance for the days actually served, so the monthly amount changes with duty days. The figure in this slip is an approximation for a full month on duty.", a:"There is no central online exam form like Constable or SI. Enrolment is done district-wise: 1) Watch enrolment notices from the District Commandant, Assam Home Guards (and slprbassam.in when a state notice is issued). 2) Apply in the prescribed form at the district Home Guards office with certificates. 3) Clear the physical test, medical and police verification, then complete the basic training." },
     tetlp:{ q:"Higher Secondary (12th) with at least 50% marks plus D.El.Ed (2 years), and Assam LP TET qualified. B.El.Ed and other combinations are also accepted as per NCTE / Assam rules - check the recruitment notice. Age 18-40 years (relaxation as per Assam rules).", a:"Two stages: 1) Qualify Assam TET (LP) - apply online at ssa.assam.gov.in when the TET notification is out. 2) Apply for teacher recruitment online through the Directorate of Elementary Education portal (dee.assam.gov.in) when vacancies are advertised, with TET score, documents and verification." },
     tetgrad:{ q:"Graduate in any discipline with at least 50% marks plus B.Ed, and Assam High School (Graduate Teacher) TET qualified. Subject and medium conditions apply post-wise - check the notice. Age 18-40 years (relaxation as per Assam rules).", a:"Two stages: 1) Qualify the Assam Graduate Teacher TET - apply online through the portal named in the TET notification (ssa.assam.gov.in / SEBA). 2) Apply for recruitment through the Directorate of Secondary Education portal (madhyamik.assam.gov.in) when vacancies are advertised, then document verification." },
     pgt:{ q:"Post Graduate (Master's) degree in the relevant subject with at least 50% marks plus B.Ed, and Assam Higher Secondary (PGT) TET qualified. Age 21-38 years (relaxation as per Assam rules) - check the notice.", a:"Two stages: 1) Qualify the Assam HS TET for Post Graduate Teachers - apply online through the portal named in the TET notification. 2) Apply for PGT recruitment through the Directorate of Secondary Education portal (madhyamik.assam.gov.in) when vacancies are advertised, then document verification." },
@@ -440,7 +458,7 @@
     j.lines.forEach(function(l){ gross += l.a; });
     var nps = Math.round((j.basic + (j.id==="rbi" ? j.da : Math.round(j.basic * (j.id==="alp"||j.id==="guard" ? 0.60 : 0.3133)))) * 0.10);
     // Use the known NPS figures so totals match the standard breakups
-    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976, assam3:3131, assam4:2465, apsc:6712, tetlp:3131, tetgrad:3519, pgt:5239, asstprof:9232, professor:23072 };
+    var NPS = { sbipo:7252, sbiclerk:3510, clerk:3510, rbi:4331, po:6367, alp:3184, guard:4672, rrb:3510, rrbpo:6367, locopilot:5664, tte:5664, stationmaster:5664, ticketclerk:3472, cgl7:7184, cgl5:4672, chsl:3184, gd:3472, mts:2880, sepoy:3784, havildar:4984, armyofficer:9906, ias:8976, ips:8976, irs:8976, assam3:3131, assam4:2465, apsc:6712, assampolsi:3519, assampolconst:3038, assamhomeguard:0, tetlp:3131, tetgrad:3519, pgt:5239, asstprof:9232, professor:23072 };
     nps = NPS[j.id];
     var inhand = gross - nps - j.tax;
     var h = "";
@@ -563,7 +581,7 @@
       // ===== Rates on Basic Pay (percentages) =====
       var rateLine = "Rates on Basic Pay:   DA = " + pctOf(d.da, d.basic) + " of Basic";
       if (d.hra) rateLine += "    |    HRA = " + pctOf(d.hra, d.basic) + " of Basic";
-      rateLine += "    |    NPS cut = 10% of (Basic + DA)";
+      rateLine += d.nps > 0 ? "    |    NPS cut = 10% of (Basic + DA)" : "    |    No NPS cut - volunteer post";
       text(40, y, rateLine, 9.5, true, C_GREEN);
       y -= 12;
 

@@ -588,6 +588,103 @@
     inspectorposts:{ q:"Graduate in any discipline. Inspector Posts is a Level 7 post filled through SSC CGL, and also by promotion (LDCE) for serving Postal Assistants. Age as per the CGL notice for direct entry (relaxation as per rules).", a:"Direct entry: Apply online only at ssc.gov.in when the SSC CGL notification is out and choose Inspector Posts (Department of Posts). Steps: 1) Complete One-Time Registration (OTR). 2) Fill the CGL form and upload photo and signature. 3) Pay the fee online. Selection: Tier-I (CBT) > Tier-II (CBT) > Document Verification and Medical. Serving staff can also appear in the departmental LDCE notified by India Post." }
   };
 
+  // Short-form terms explained in the PDF only — plain meanings for the abbreviations
+  // used in this job's name, qualification and apply text (SSC, CGL, IBPS, RRB, TET…)
+  var TERM_DEFS = {
+    "DA":"Dearness Allowance - extra pay to fight rising prices",
+    "HRA":"House Rent Allowance - money for house rent",
+    "NPS":"National Pension System - pension saving; 10% is cut from your salary",
+    "SSC":"Staff Selection Commission - the central body that runs these exams",
+    "CGL":"Combined Graduate Level - SSC exam for graduate posts",
+    "CHSL":"Combined Higher Secondary Level - SSC exam for 12th-pass posts",
+    "LDC":"Lower Division Clerk",
+    "ASO":"Assistant Section Officer",
+    "GD":"General Duty",
+    "MTS":"Multi Tasking Staff",
+    "CBT":"Computer Based Test - the online written exam",
+    "OTR":"One-Time Registration - one-time signup on ssc.gov.in",
+    "PET / PST":"Physical Efficiency / Standard Tests - running, height and chest checks",
+    "IBPS":"Institute of Banking Personnel Selection - runs the joint bank exams",
+    "PO":"Probationary Officer - entry-level bank officer post",
+    "SO":"Specialist Officer - IT, HR, Law, Marketing and other expert posts",
+    "CRP":"Common Recruitment Process - IBPS's joint exam for many banks",
+    "SBI":"State Bank of India",
+    "RBI":"Reserve Bank of India - the country's central bank",
+    "NABARD":"National Bank for Agriculture and Rural Development",
+    "RRB (Bank)":"Regional Rural Bank - the rural / gramin banks",
+    "RDBS":"Rural Development Banking Service - NABARD's main officer service",
+    "LCA":"Local Compensatory Allowance - extra pay for costly cities (RBI)",
+    "LIC":"Life Insurance Corporation of India",
+    "AAO":"Assistant Administrative Officer - insurance officer post",
+    "ADO":"Apprentice Development Officer - builds LIC's agent network",
+    "AO":"Administrative Officer - insurance officer post (Scale-I)",
+    "NIACL":"New India Assurance Company Limited",
+    "UIIC":"United India Insurance Company Limited",
+    "RRB (Railway)":"Railway Recruitment Board - runs the railway exams",
+    "NTPC":"Non-Technical Popular Categories - railway clerk, guard and station posts",
+    "ALP":"Assistant Loco Pilot - assists the train driver",
+    "RPF":"Railway Protection Force - the railway security force",
+    "CEN":"Centralised Employment Notice - the railway recruitment notice",
+    "TTE":"Travelling Ticket Examiner",
+    "GDS":"Gramin Dak Sevak - rural post office worker",
+    "TRCA":"Time-Related Continuity Allowance - GDS pay, based on duty hours",
+    "BPM":"Branch Postmaster - in charge of a branch post office",
+    "ABPM":"Assistant Branch Postmaster",
+    "IP":"Inspector Posts",
+    "LDCE":"Limited Departmental Competitive Examination - promotion exam for serving staff",
+    "UPSC":"Union Public Service Commission - runs the Civil Services Examination",
+    "IAS":"Indian Administrative Service",
+    "IPS":"Indian Police Service",
+    "IRS":"Indian Revenue Service - income tax and customs",
+    "CSE":"Civil Services Examination - the UPSC exam for IAS, IPS and IRS",
+    "MSP":"Military Service Pay - extra pay only for defence posts",
+    "NDA":"National Defence Academy - officer entry after 12th",
+    "CDS":"Combined Defence Services - officer entry after graduation",
+    "SSB":"Services Selection Board - the 5-day officer interview",
+    "ADRE":"Assam Direct Recruitment Examination - for Assam Grade III and IV jobs",
+    "APSC":"Assam Public Service Commission",
+    "ACS":"Assam Civil Service",
+    "CCE":"Combined Competitive Examination - APSC's main exam",
+    "SLPRB":"State Level Police Recruitment Board, Assam - runs police recruitment",
+    "UB / AP":"Unarmed Branch / Armed Police - the two Assam Police branches",
+    "PB-2":"Pay Band 2 - the Assam pay band for SI and Constable",
+    "TET":"Teacher Eligibility Test - the must-pass exam to become a teacher",
+    "UGC":"University Grants Commission - sets college teacher pay and rules",
+    "NET":"National Eligibility Test - qualifying exam for Assistant Professor",
+    "B.Ed":"Bachelor of Education - teacher training degree",
+    "D.El.Ed":"Diploma in Elementary Education - primary teacher training",
+    "LP":"Lower Primary - Classes 1 to 5",
+    "PGT":"Post Graduate Teacher"
+  };
+  var CAT_TERMS = {
+    bank:["IBPS","CRP"],
+    insurance:["AO"],
+    railway:["RRB (Railway)","CEN","CBT"],
+    ssc:["SSC","CBT","OTR"],
+    defence:["MSP"],
+    upsc:["UPSC","CSE"],
+    assam:["ADRE"],
+    education:["TET"],
+    post:[]
+  };
+  var JOB_TERMS = {
+    sbipo:["SBI","PO"], sbiclerk:["SBI"], po:["PO"], rbi:["RBI","LCA"],
+    rrb:["RRB (Bank)"], rrbpo:["PO","RRB (Bank)"], rbigb:["RBI","LCA"],
+    nabarda:["NABARD","RDBS"], nabardb:["NABARD","RDBS"], ibpsso:["SO"], nabarddev:["NABARD"],
+    licaao:["LIC","AAO"], licado:["LIC","ADO"], licassistant:["LIC"],
+    niaclao:["NIACL"], niaclassistant:["NIACL"], uiicao:["UIIC"],
+    alp:["ALP"], guard:["NTPC"], tte:["TTE","NTPC"], stationmaster:["NTPC"],
+    ticketclerk:["NTPC"], groupc:["NTPC"], rpfconst:["RPF"], rpfsi:["RPF"],
+    cgl7:["CGL","ASO"], cgl5:["CGL"], chsl:["CHSL","LDC"], gd:["GD","PET / PST"], mts:["MTS"],
+    armyofficer:["NDA","CDS","SSB"],
+    ias:["IAS"], ips:["IPS"], irs:["IRS"],
+    apsc:["APSC","ACS","CCE"], assampolsi:["SLPRB","UB / AP","PB-2"], assampolconst:["SLPRB","UB / AP","PB-2"],
+    tetlp:["LP","D.El.Ed"], tetgrad:["B.Ed"], pgt:["PGT","B.Ed"],
+    asstprof:["UGC","NET"], professor:["UGC"],
+    gds:["GDS","TRCA","BPM","ABPM"], postmts:["MTS"],
+    postalassist:["SSC","CHSL"], inspectorposts:["IP","LDCE","SSC","CGL"]
+  };
+
   var slipData = null;
   function renderSlip(){
     var j = current;
@@ -614,7 +711,15 @@
     var info = JOB_INFO[j.id] || { q:"See the official notification for this post.", a:"Apply online only on the official website given in the notification." };
     var hraAmt = null;
     j.lines.forEach(function(l){ if (l.n.indexOf("HRA") === 0) hraAmt = l.a; });
-    slipData = { name:j.name, sub:j.sub + " - per month", items:items, gross:gross, nps:nps, tax:j.tax, inhand:inhand, qual:info.q, apply:info.a, basic:j.basic, da:j.da, cat:j.cat, hra:hraAmt };
+    var termKeys = [];
+    function addTerm(t){ if (TERM_DEFS[t] && termKeys.indexOf(t) === -1) termKeys.push(t); }
+    addTerm("DA");
+    if (hraAmt) addTerm("HRA");
+    if (nps > 0) addTerm("NPS");
+    (CAT_TERMS[j.cat] || []).forEach(addTerm);
+    (JOB_TERMS[j.id] || []).forEach(addTerm);
+    var terms = termKeys.slice(0, 8).map(function(t){ return [t, TERM_DEFS[t]]; });
+    slipData = { name:j.name, sub:j.sub + " - per month", items:items, gross:gross, nps:nps, tax:j.tax, inhand:inhand, qual:info.q, apply:info.a, basic:j.basic, da:j.da, cat:j.cat, hra:hraAmt, terms:terms };
   }
 
   // Reservation + age relaxation — PDF only. Central pattern for Bank / Railway / SSC / Defence / UPSC;
@@ -812,6 +917,21 @@
       y -= 2;
       wrap(rv.note, 98).forEach(function(ln){ text(40, y, ln, 8.5, false, C_INK2); y -= 11; });
       y -= 6;
+
+      // ===== Short forms explained =====
+      if (d.terms && d.terms.length) {
+        sectionTitle("What the Short Forms Mean");
+        var leftY = y, rightY = y;
+        d.terms.forEach(function(t, i){
+          var isLeft = (i % 2 === 0);
+          var colX = isLeft ? 40 : 292;
+          var cy = isLeft ? leftY : rightY;
+          wrap(t[0] + " - " + t[1], 48).forEach(function(ln){ text(colX, cy, ln, 8.5, false, C_INK); cy -= 10.5; });
+          cy -= 3;
+          if (isLeft) leftY = cy; else rightY = cy;
+        });
+        y = Math.min(leftY, rightY) - 4;
+      }
 
       // ===== Footer =====
       rule(y); y -= 14;
